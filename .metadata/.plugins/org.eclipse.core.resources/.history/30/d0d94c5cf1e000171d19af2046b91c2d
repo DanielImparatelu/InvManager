@@ -1,0 +1,5 @@
+package ac.uk.invmanager.main;
+
+public class InventoryGUI {
+
+}
