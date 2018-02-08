@@ -1,0 +1,148 @@
+package com.github.invmanager.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class UsersDAOImpl implements UsersDAO {
+	
+	private PreparedStatement insertStatement = null;
+	private PreparedStatement retrieveByName = null;
+	
+	public void connect() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection con = DriverManager.getConnection("jdbc:mysql://sql2.freemysqlhosting.net:3306/sql2216024", "sql2216024", "dN7%qI2%");
+			insertStatement = con.prepareStatement("INSERT INTO USERS_DATA(User_ID, User_Name, User_Password, User_Is_Admin) "
+													+"VALUES (?,?,?,?)");
+			retrieveByName = con.prepareStatement("SELECT * FROM USERS_DATA "
+												+ "WHERE User_Name = ?");
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public List<Users> getAllUsers() {
+	
+		DataSource ds = new DataSource();
+		Connection con = ds.createConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		List<Users> userList = new ArrayList<Users>();
+		
+		try {
+			ps = con.prepareStatement("SELECT * FROM USERS_DATA");
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				Users users = new Users();
+				
+				users.setName(rs.getString("User_Name"));
+				users.setPassword(rs.getString("User_Password"));
+				users.setIsAdmin(rs.getInt("User_Is_Admin"));
+				
+				userList.add(users);
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				if(con != null) {
+					con.close();
+				}
+				if(ps != null) {
+					ps.close();
+				}
+				if(rs != null) {
+					rs.close();
+				}
+			}
+			catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		return userList;
+	}
+
+//	@Override
+//	public Users getUserByName(String userName) throws SQLException {
+//		//try {
+//			Users user = new Users(userName);
+//			retrieveByName.setString(1, userName);
+//			ResultSet rs = retrieveByName.executeQuery();
+//			if(!rs.next()) return null;
+//			
+//			user.setName(rs.getString("User_Name"));
+//			user.setPassword(rs.getString("User_Password"));
+//			user.setIsAdmin(rs.getInt("User_Is_Admin"));
+//			return user;
+////		}
+////		catch(Exception e) {
+////			e.printStackTrace();
+////		}
+//		
+//		
+//	}
+
+	@Override
+	public void updateUser(Users user) {
+
+	}
+
+	@Override
+	public void deleteUser(Users user) {
+
+	}
+	
+	@Override
+	public void addUser(Users user) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		try {
+			DataSource ds = new DataSource();
+			con = ds.createConnection();
+			ps = con.prepareStatement("INSERT INTO USERS_DATA(User_ID, User_Name, User_Password, User_Is_Admin) "
+					+"VALUES (?,?,?,?)");
+			ps.setInt(1, 1);
+			ps.setString(2, user.getName());
+			ps.setString(3, user.getPassword());
+			ps.setInt(4, user.getIsAdmin());
+			ps.executeUpdate();
+			System.out.println("Data is inserted into the Users table for user "+user.getName());
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				if(ps != null) {
+					ps.close();
+				}
+				if(con != null) {
+					con.close();
+				}
+			}
+			catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+	}
+
+	@Override
+	public Users getUserByName(String userName) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+}

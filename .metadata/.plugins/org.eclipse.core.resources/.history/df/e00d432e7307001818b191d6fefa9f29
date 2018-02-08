@@ -1,0 +1,108 @@
+package com.github.invmanager.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class OrdersDAOImpl implements OrdersDAO{
+	
+	@Override
+	public List<Orders> getAllOrders() {//returns all orders in the form of a List object
+		
+		DataSource ds = new DataSource();
+		Connection con = ds.createConnection();//creates the connection to the database using the DataSource object
+		PreparedStatement ps = null;//instantiating the PreparedStatement and ResultSet to null so they can be closed easily later
+		ResultSet rs = null;
+		
+		List<Orders> orderList = new ArrayList<Orders>();//creates an array to hold the information
+		
+		try {
+			ps = con.prepareStatement("SELECT * FROM ORDERS_DATA");//SQL query-selects everything from that table
+			rs = ps.executeQuery();//executes the above query
+			while(rs.next()) {//loops through the resultset and retrieves the data
+				Orders orders = new Orders();
+				
+				orders.setItemID(rs.getInt("Item_ID"));
+				orders.setItemQty(rs.getInt("Item_Quantity"));
+				orders.setOrderDate(rs.getDate("Order_Date"));
+				orders.setOrderStanding(rs.getInt("Order_Standing"));
+				
+				orderList.add(orders);//and adds it to the array
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();//exception handling
+		}
+		finally {//block responsible for closing the connection and objects used
+			try {
+				if(con != null) {
+					con.close();
+				}
+				if(ps != null) {
+					ps.close();
+				}
+				if(rs != null) {
+					rs.close();
+				}
+			}
+			catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		return orderList;
+	}
+	
+	@Override
+	public void addOrder(Orders order) {
+		
+	}
+
+	@Override
+	public Orders getOrder(int orderNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateOrder(Orders order) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteOrder(int orderID) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		
+		try {
+			DataSource ds = new DataSource();
+			con = ds.createConnection();
+			ps = con.prepareStatement("DELETE FROM ORDERS_DATA WHERE Order_ID = ?");
+			ps.setInt(1, orderID);//assigning the parameter to the PreparedStatement
+			ps.executeUpdate();//modifying existing data is done using executeUpdate() rather than executeQuery()
+			System.out.println("Order number "+orderID+" has been deleted from the database");
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally {//closing connections
+			try {
+				if(ps != null) {
+					ps.close();
+				}
+				if(con != null) {
+					con.close();
+				}
+			}
+			catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+	}
+
+}

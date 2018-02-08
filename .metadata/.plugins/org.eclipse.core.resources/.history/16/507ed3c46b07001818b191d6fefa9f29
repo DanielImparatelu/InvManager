@@ -1,0 +1,27 @@
+package com.github.invmanager.gui;
+
+import com.github.invmanager.dao.Users;
+import com.github.invmanager.dao.UsersDAO;
+import com.github.invmanager.dao.UsersDAOImpl;
+
+public class EmployeeDAODemo {
+
+	public static void main(String [] args) {
+		UsersDAO usersDao = new UsersDAOImpl();
+		
+		//retrieve all users
+		for(Users users: usersDao.getAllUsers() ) {
+			System.out.println("user: [User Name = "+ users.getName()+", Password = "+users.getPassword()+", is admin = "+users.getIsAdmin()+"]");
+		}
+		
+		//add user
+//		Users userTest = new Users();
+//		userTest.setName("Test UserName2");
+//		userTest.setPassword("Test12342");
+//		userTest.setIsAdmin(1);
+//		
+//		usersDao.addUser(userTest);
+		
+		usersDao.deleteUser("UserName");
+	}
+}

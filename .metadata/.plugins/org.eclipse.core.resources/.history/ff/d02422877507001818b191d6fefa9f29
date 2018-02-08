@@ -1,0 +1,45 @@
+package com.github.invmanager.dao;
+
+public class Users {
+	
+	private String userName;
+	private String password;
+	private int isAdmin;
+	
+//	Users(String userName, String password, int isAdmin){
+//		this.userName = userName;
+//		this.password = password;
+//		this.isAdmin = isAdmin;
+//	}
+//
+//	Users(String userName){
+//		this.userName = userName;
+//	}
+	public void setName(String userName) {
+		this.userName = userName;
+		
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+		
+	}
+
+	public void setIsAdmin(int isAdmin) {
+		this.isAdmin = isAdmin;
+		
+	}
+
+	public String getName() {
+		return userName;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+	
+	public int getIsAdmin() {
+		return isAdmin;
+	}
+
+}

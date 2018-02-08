@@ -1,4 +1,4 @@
-# List of external plug-in models previously loaded. Timestamp: 1513270142842
+# List of external plug-in models previously loaded. Timestamp: 1518094803482
 file:/C:/Users/Daniel/.p2/pool/plugins/ch.qos.logback.classic_1.0.7.v20121108-1250.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/ch.qos.logback.core_1.0.7.v20121108-1250.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/ch.qos.logback.slf4j_1.0.7.v201505121915.jar
@@ -8,9 +8,9 @@ file:/C:/Users/Daniel/.p2/pool/plugins/com.google.guava_21.0.0.v20170206-1425.ja
 file:/C:/Users/Daniel/.p2/pool/plugins/com.google.guava_15.0.0.v201403281430.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/com.google.inject_3.0.0.v201312141243.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/com.google.inject.multibindings_3.0.0.v201402270930.jar
-file:/C:/Users/Daniel/.p2/pool/plugins/com.gradleware.tooling.client_0.19.3.v20170801075239.jar
-file:/C:/Users/Daniel/.p2/pool/plugins/com.gradleware.tooling.model_0.19.3.v20170801075239.jar
-file:/C:/Users/Daniel/.p2/pool/plugins/com.gradleware.tooling.utils_0.19.3.v20170801075239.jar
+file:/C:/Users/Daniel/.p2/pool/plugins/com.gradleware.tooling.client_0.19.4.v20171108133209.jar
+file:/C:/Users/Daniel/.p2/pool/plugins/com.gradleware.tooling.model_0.19.4.v20171108133209.jar
+file:/C:/Users/Daniel/.p2/pool/plugins/com.gradleware.tooling.utils_0.19.4.v20171108133209.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/com.ibm.icu_58.2.0.v20170418-1837.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/com.jcraft.jsch_0.1.54.v20170116-1932.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/com.sun.el_2.2.0.v201303151357.jar
@@ -70,10 +70,10 @@ file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.aether.maven_3.1.0.v20140706-
 file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.ant.core_3.5.0.v20170509-2149.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.ant.launching_1.2.0.v20170509-2157.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.ant.ui_3.7.0.v20170412-1054.jar
-file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.buildship.branding_2.1.2.v20170807-1324.jar
-file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.buildship.core_2.1.2.v20170807-1324.jar
-file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.buildship.stsmigration_2.1.2.v20170807-1324.jar
-file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.buildship.ui_2.1.2.v20170807-1324.jar
+file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.buildship.branding_2.2.0.v20171211-1404.jar
+file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.buildship.core_2.2.0.v20171211-1404.jar
+file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.buildship.stsmigration_2.2.0.v20171211-1404.jar
+file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.buildship.ui_2.2.0.v20171211-1404.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.compare_3.7.101.v20170724-1603.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.compare.core_3.6.100.v20170516-0820.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.compare.win32_1.2.0.v20170517-0839.jar
@@ -533,7 +533,7 @@ file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.wst.xsd.ui_1.2.600.v201511240
 file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.wst.xsdeditor.doc.user_1.0.800.v201707252002.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.xsd_2.13.0.v20170609-0928.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/org.eclipse.xsd.edit_2.8.0.v20170609-0928.jar
-file:/C:/Users/Daniel/.p2/pool/plugins/org.gradle.toolingapi_3.5.0.v20170801075239.jar
+file:/C:/Users/Daniel/.p2/pool/plugins/org.gradle.toolingapi_4.3.0.v20171108133209.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/org.hamcrest.core_1.3.0.v201303031735.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/org.jacoco.agent_0.7.9.v20170208-1730.jar
 file:/C:/Users/Daniel/.p2/pool/plugins/org.jacoco.core_0.7.9.v20170208-1730.jar

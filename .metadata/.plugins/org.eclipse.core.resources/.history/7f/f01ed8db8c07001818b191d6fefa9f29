@@ -1,0 +1,5 @@
+package com.github.invmanager.dal;
+
+public class Items {
+
+}
