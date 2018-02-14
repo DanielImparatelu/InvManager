@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,13 +29,14 @@ import java.net.Socket;
 public class MainActivity extends Activity {
 
     TextView barcodeResult;
+    MediaPlayer mp;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         barcodeResult = (TextView) findViewById(R.id.barcode_result);
-
+        mp = MediaPlayer.create(this, R.raw.beep1);
 
     }
     //add event to the barcode scanner button
@@ -56,6 +58,7 @@ public class MainActivity extends Activity {
 
                     SendTask sendTask = new SendTask(this);
                     sendTask.execute(barcode.displayValue);//gets the scanned barcode and sends its value through TCP/IP over to the server
+                    mp.start();
 
                 }
                 else{

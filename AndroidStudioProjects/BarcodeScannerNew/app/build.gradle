@@ -28,4 +28,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.1.0'
     //mobile vision dependency
     compile 'com.google.android.gms:play-services-vision:11.8.0'
+    implementation 'com.android.support:design:26.1.0'
 }

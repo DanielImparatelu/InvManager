@@ -1,6 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</LinearLayout>
+    <Button
+        android:id="@+id/scan_barcode"
+        style="@android:style/Widget.Material.Light.Button.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/barcode_result"
+        android:layout_marginTop="24dp"
+        android:onClick="loginScanBarcode"
+        android:text="Server Login" />
+
+    <Button
+        android:id="@+id/add_items"
+        style="@android:style/Widget.Material.Light.Button.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/scan_barcode"
+        android:text="Add Items//WIP" />
+
+    <TextView
+        android:id="@+id/barcode_result"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_above="@+id/imageView4"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imageView"
+        android:layout_marginTop="92dp"
+        android:text="          Welcome to the mobile barcode scanner. Go to Server Login to scan the login barcode, or select Add Items to scan items in bulk and add them to the database. "
+        android:textAppearance="@android:style/TextAppearance.Widget.TextView" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:adjustViewBounds="true"
+        android:background="@color/colorPrimaryDark"
+        app:srcCompat="@color/colorPrimaryDark" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:text="InvBarcodeScanner"
+        android:textAppearance="@android:style/TextAppearance.Material.Widget.ActionBar.Title"
+        android:textColor="#ffffff"/>
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:adjustViewBounds="true"
+        android:background="@color/colorPrimaryDark"
+        app:srcCompat="@color/colorPrimaryDark" />
+
+</RelativeLayout>

@@ -5,23 +5,8 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <Button
-        android:id="@+id/scan_barcode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="loginScanBarcode"
-        android:text="Server Login" />
 
-    <Button
-        android:id="@+id/add_items"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Items//WIP"/>
-    <TextView
-        android:id="@+id/barcode_result"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
-    <include activity_contents.xml
+    <include layout = "@layout/activity_contents"/>
 
 </LinearLayout>
