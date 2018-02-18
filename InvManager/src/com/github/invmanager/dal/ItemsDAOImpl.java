@@ -195,8 +195,8 @@ public class ItemsDAOImpl implements ItemsDAO {
 		try {
 			DataSource ds = new DataSource();
 			con = ds.createConnection();
-			ps = con.prepareStatement("UPDATE ITEMS_DATA SET Item_Name = ? WHERE Item_ID = ?");
-			ps.setString(1, items.getItemName());
+			ps = con.prepareStatement("UPDATE ITEMS_DATA SET Item_Qty = ? WHERE Item_ID = ?");
+			ps.setInt(1, items.getItemQty());
 			ps.setInt(2, items.getItemID());
 			ps.executeUpdate();
 			System.out.println("Updated item number "+items.getItemID());

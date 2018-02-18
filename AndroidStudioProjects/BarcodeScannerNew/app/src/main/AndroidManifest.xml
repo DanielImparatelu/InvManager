@@ -3,15 +3,21 @@
 
 
     <!-- permissions to use camera-->
-    <uses-feature android:name="android.hardware.camera2"/>
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.flash"/>
+
     <uses-permission android:name="android.hardware.camera.autofocus" />
+
+
 
     <!-- permissions to use TCP-IP to send data to the main program-->
     <!--potential need for the READ_EXTERNAL_STORAGE permission as well-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+   <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
+
 
     <application
         android:allowBackup="true"
@@ -40,8 +46,14 @@
 
             </intent-filter>
         </activity>
+
         <activity android:name=".ScanBarcodeActivity"
-            android:label="Scan Barcode"/>
+            android:screenOrientation="fullSensor"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden">
+
+        </activity>
 
     </application>
 

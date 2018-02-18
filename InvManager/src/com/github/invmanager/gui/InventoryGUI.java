@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Robot;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,8 +16,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,6 +31,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
+import javax.swing.text.DateFormatter;
 
 import com.github.invmanager.dal.Items;
 import com.github.invmanager.dal.ItemsDAOImpl;
@@ -38,7 +44,7 @@ import com.github.invmanager.dal.UsersDAOImpl;
  * This is the main interface of the program
  */
 
-public class InventoryGUI extends JFrame implements ActionListener {
+public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 
 	//using Sockets to receive the scanned input from the Android application
 	//the following code only initialises the components
@@ -60,7 +66,8 @@ public class InventoryGUI extends JFrame implements ActionListener {
 
 		if(e.getSource().equals(addItemByID)) {
 
-			itemsDAO.addItem(new Items(006, "TEST213", 10, "2019-02-03", "2018-02-01"));
+			mainWindow.setVisible(false);
+			addItemWindow.setVisible(true);
 		}
 
 		else if(e.getSource().equals(showAllItems)) {
@@ -75,6 +82,9 @@ public class InventoryGUI extends JFrame implements ActionListener {
 
 		else if (e.getSource().equals(showAllUsers)) {
 
+			for(Users users: usersDAO.getAllUsers() ) {
+				System.out.println("user: [User Name = "+ users.getName()+", Password = "+users.getPassword()+", is admin = "+users.getIsAdmin()+"]");
+			}
 		}
 
 		else if (e.getSource().equals(getItemByName)) {
@@ -95,10 +105,10 @@ public class InventoryGUI extends JFrame implements ActionListener {
 			String inputCardField = new String(inputCard);
 
 			if((userNameField.getText().trim().length() == 0) && (passwordField.getPassword().length == 0) && (cardField.getPassword().length == 0)){
-				lblStatus.setText("Please enter input");
-				cardField.setText("");
-				userNameField.setText("");
-				passwordField.setText("");
+				//				lblStatus.setText("Please enter input");
+				//				cardField.setText("");
+				//				userNameField.setText("");
+				//				passwordField.setText("");
 			}
 
 			//Username and password login statement
@@ -127,10 +137,6 @@ public class InventoryGUI extends JFrame implements ActionListener {
 			}
 		}
 
-		else if(e.getSource().equals(btnExit)){
-			System.exit(0);
-		}
-
 		else if ((e.getSource().equals(textField)) || (e.getSource().equals(btnSearch))) {
 
 			for(Items item: itemsDAO.getItemByName(textField.getText()) ) {
@@ -139,10 +145,12 @@ public class InventoryGUI extends JFrame implements ActionListener {
 						+item.getItemExpDate()+", last restocked = "+item.getitemLastRestocked()+"]"+"\n\n");
 			}
 		}
+		
+		else if(e.getSource().equals(btnExit)){
+			System.exit(0);
+		}
 
 	}
-
-
 
 	private JButton placeOrder = new JButton("Place Order");
 	private JButton addItemByID = new JButton("Add Item");
@@ -152,24 +160,46 @@ public class InventoryGUI extends JFrame implements ActionListener {
 	private JButton btnNewButton_5 = new JButton("New button");
 	private JScrollPane scrollPane = new JScrollPane();
 	private JTextArea textArea = new JTextArea();
-	private final JPanel startWindow = new JPanel();
-	private final JPanel mainWindow = new JPanel();
+	private final static JPanel startWindow = new JPanel();
+	private final static JPanel mainWindow = new JPanel();
 	private final JButton btnLogin = new JButton("Login");
 	private final JButton btnExit = new JButton("Exit");
 	private final static JPasswordField cardField = new JPasswordField();
 	private final static JTextField userNameField = new JTextField();
-	private final JPasswordField passwordField = new JPasswordField();
+	private final static JPasswordField passwordField = new JPasswordField();
 	private final JLabel lblScan = new JLabel("Scan/Swipe Card:");
 	private final JLabel lblUsername = new JLabel("Username:");
 	private final JLabel lblPassword = new JLabel("Password:");
-	private final JLabel lblStatus = new JLabel("");
+	private final static JLabel lblStatus = new JLabel("");
 	private JTextField textField;
 	private final JButton btnSearch = new JButton("Search");
+	private final JPanel addItemWindow = new JPanel();
+	private final JLabel lblItemId = new JLabel("Item ID");
+	private final JLabel lblItemName = new JLabel("Item Name");
+	private final JLabel lblQuantity = new JLabel("Quantity");
+	private final JLabel lblExpiryDate = new JLabel("Expiry date");
+	private final JTextField idField = new JTextField();
+	private final JTextField itemNameField = new JTextField();
+	private final JTextField itemQtyField = new JTextField();
+	 DateFormat format = new SimpleDateFormat("dd-MMMM-yyyy");
+     DateFormatter df = new DateFormatter(format);
+	private final JFormattedTextField itemExpDateField = new JFormattedTextField(df);
+	
+	private final JButton btnAdd = new JButton("Add");
+	private final JButton btnBack = new JButton("Back");
+	private final JLabel lblLastRestocked = new JLabel("Last restocked");
+	private final JTextField itemLastRestocked = new JTextField();
 
+	
 
 	public InventoryGUI() {
 
 		super();
+		itemLastRestocked.setColumns(10);
+		itemExpDateField.setColumns(10);
+		itemQtyField.setColumns(10);
+		itemNameField.setColumns(10);
+		idField.setColumns(10);
 		userNameField.setColumns(10);
 		setSize(new Dimension(800, 600));
 		getContentPane().setBackground(Color.LIGHT_GRAY);
@@ -268,7 +298,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		getContentPane().add(mainWindow, "name_80293382047698");
 		GridBagLayout gbl_mainWindow = new GridBagLayout();
 		gbl_mainWindow.columnWidths = new int[] {64, 155, 120, 140, 98, 103, 0};
-		gbl_mainWindow.rowHeights = new int[]{64, 30, 30, 30, 30, 44, 30, 32, 32, 0, 0, 0, 0};
+		gbl_mainWindow.rowHeights = new int[]{64, 30, 30, 30, 30, 30, 30, 32, 32, 0, 0, 0, 0};
 		gbl_mainWindow.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gbl_mainWindow.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		mainWindow.setLayout(gbl_mainWindow);
@@ -317,6 +347,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbc_showAllUsers.insets = new Insets(0, 0, 5, 5);
 		gbc_showAllUsers.gridx = 4;
 		gbc_showAllUsers.gridy = 4;
+		showAllUsers.addActionListener(this);
 		mainWindow.add(showAllUsers, gbc_showAllUsers);
 		getItemByName.setBackground(SystemColor.control);
 		getItemByName.addActionListener(this);
@@ -355,12 +386,162 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		btnSearch.setBackground(Color.WHITE);
 
 		mainWindow.add(btnSearch, gbc_btnSearch);
+		addItemWindow.setBackground(Color.LIGHT_GRAY);
+
+		getContentPane().add(addItemWindow, "name_9138862488992");
+		GridBagLayout gbl_addItemWindow = new GridBagLayout();
+		gbl_addItemWindow.columnWidths = new int[] {120, 60, 118, 120, 120, 120, 111, 0};
+		gbl_addItemWindow.rowHeights = new int[] {60, 80, 30, 30, 30, 30, 0, 6, 117, 145, 0};
+		gbl_addItemWindow.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_addItemWindow.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		addItemWindow.setLayout(gbl_addItemWindow);
+		
+		GridBagConstraints gbc_lblItemId = new GridBagConstraints();
+		gbc_lblItemId.insets = new Insets(0, 0, 5, 5);
+		gbc_lblItemId.gridx = 2;
+		gbc_lblItemId.gridy = 2;
+		addItemWindow.add(lblItemId, gbc_lblItemId);
+		
+		GridBagConstraints gbc_idField = new GridBagConstraints();
+		gbc_idField.gridwidth = 2;
+		gbc_idField.insets = new Insets(0, 0, 5, 5);
+		gbc_idField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_idField.gridx = 3;
+		gbc_idField.gridy = 2;
+		addItemWindow.add(idField, gbc_idField);
+		
+		GridBagConstraints gbc_lblItemName = new GridBagConstraints();
+		gbc_lblItemName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblItemName.gridx = 2;
+		gbc_lblItemName.gridy = 3;
+		addItemWindow.add(lblItemName, gbc_lblItemName);
+		
+		GridBagConstraints gbc_itemNameField = new GridBagConstraints();
+		gbc_itemNameField.gridwidth = 2;
+		gbc_itemNameField.insets = new Insets(0, 0, 5, 5);
+		gbc_itemNameField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_itemNameField.gridx = 3;
+		gbc_itemNameField.gridy = 3;
+		addItemWindow.add(itemNameField, gbc_itemNameField);
+		
+		GridBagConstraints gbc_lblQuantity = new GridBagConstraints();
+		gbc_lblQuantity.insets = new Insets(0, 0, 5, 5);
+		gbc_lblQuantity.gridx = 2;
+		gbc_lblQuantity.gridy = 4;
+		addItemWindow.add(lblQuantity, gbc_lblQuantity);
+		
+		GridBagConstraints gbc_itemQtyField = new GridBagConstraints();
+		gbc_itemQtyField.gridwidth = 2;
+		gbc_itemQtyField.insets = new Insets(0, 0, 5, 5);
+		gbc_itemQtyField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_itemQtyField.gridx = 3;
+		gbc_itemQtyField.gridy = 4;
+		addItemWindow.add(itemQtyField, gbc_itemQtyField);
+		
+		GridBagConstraints gbc_lblExpiryDate = new GridBagConstraints();
+		gbc_lblExpiryDate.insets = new Insets(0, 0, 5, 5);
+		gbc_lblExpiryDate.gridx = 2;
+		gbc_lblExpiryDate.gridy = 5;
+		addItemWindow.add(lblExpiryDate, gbc_lblExpiryDate);
+		
+		GridBagConstraints gbc_itemExpDateField = new GridBagConstraints();
+		gbc_itemExpDateField.gridwidth = 2;
+		gbc_itemExpDateField.insets = new Insets(0, 0, 5, 5);
+		gbc_itemExpDateField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_itemExpDateField.gridx = 3;
+		gbc_itemExpDateField.gridy = 5;
+		itemExpDateField.setValue(new Date());
+		addItemWindow.add(itemExpDateField, gbc_itemExpDateField);
+		
+		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
+		gbc_btnAdd.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnAdd.insets = new Insets(0, 0, 5, 5);
+		gbc_btnAdd.gridx = 3;
+		gbc_btnAdd.gridy = 7;
+		btnAdd.setBackground(Color.WHITE);
+		btnAdd.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				addItemToDb();
+			}
+			
+		});
+		
+		GridBagConstraints gbc_lblLastRestocked = new GridBagConstraints();
+		gbc_lblLastRestocked.insets = new Insets(0, 0, 5, 5);
+		gbc_lblLastRestocked.gridx = 2;
+		gbc_lblLastRestocked.gridy = 6;
+		addItemWindow.add(lblLastRestocked, gbc_lblLastRestocked);
+		
+		GridBagConstraints gbc_itemLastRestocked = new GridBagConstraints();
+		gbc_itemLastRestocked.gridwidth = 2;
+		gbc_itemLastRestocked.insets = new Insets(0, 0, 5, 5);
+		gbc_itemLastRestocked.fill = GridBagConstraints.HORIZONTAL;
+		gbc_itemLastRestocked.gridx = 3;
+		gbc_itemLastRestocked.gridy = 6;
+		addItemWindow.add(itemLastRestocked, gbc_itemLastRestocked);
+		addItemWindow.add(btnAdd, gbc_btnAdd);
+		
+		GridBagConstraints gbc_btnBack = new GridBagConstraints();
+		gbc_btnBack.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnBack.insets = new Insets(0, 0, 5, 5);
+		gbc_btnBack.gridx = 4;
+		gbc_btnBack.gridy = 7;
+		btnBack.setBackground(Color.WHITE);
+		btnBack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				addItemWindow.setVisible(false);
+				mainWindow.setVisible(true);
+			}
+			
+		});
+		addItemWindow.add(btnBack, gbc_btnBack);
+	}
+	
+	public void addItemToDb() {
+		
+		int itemID = Integer.valueOf(idField.getText());
+		String itemName = itemNameField.getText();
+		String itemExpDate = itemExpDateField.getText();
+		String itemLastRestocked2 = itemLastRestocked.getText();
+		int itemQty = Integer.valueOf(itemQtyField.getText());
+		
+		Items item = new Items();
+		item.setItemID(itemID);
+		item.setItemName(itemName);
+		item.setItemExpDate(itemExpDate);
+		item.setItemLastRestocked(itemLastRestocked2);
+		item.setItemQty(itemQty);
+		itemsDAO.addItem(item);
 	}
 
+
+	public void run() {//method implemented by the Runnable interface
+
+		try {
+			Robot robot = new Robot();//new instance of Robot class to simulate key presses
+			do {
+				//robot.keyPress(KeyEvent.VK_ENTER);//simulate Enter press to login
+				Thread.sleep(500);
+			}
+			while(!mainWindow.isVisible());//when the main window is visible the thread stops
+
+		} catch (Exception e) {
+			System.out.println("Thread interrupted.");
+		}
+		System.out.println("Thread exiting.");
+	}
 
 	public static void main(String [] args) {
 		InventoryGUI gui = new InventoryGUI();
 		gui.setVisible(true);
+
+
+		Thread t = new Thread(gui);
+		t.start();//start the runnable process
 
 		try//open the server so the Android app can connect
 		{
@@ -375,14 +556,14 @@ public class InventoryGUI extends JFrame implements ActionListener {
 				cardField.setText(message);
 			}
 
-
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
+
 	}
-
-
-
+	
 }
+
+

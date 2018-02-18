@@ -33,14 +33,21 @@
         android:layout_alignParentStart="true" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/scan_format"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/imageView"
-        android:layout_marginTop="92dp"
+        android:layout_marginBottom="77dp"
         android:text="          Welcome to the mobile barcode scanner. Go to Server Login to scan the login barcode, or select Add Items to scan items in bulk and add them to the database. "
         android:textAppearance="@android:style/TextAppearance.Widget.TextView" />
+
+    <TextView
+        android:id="@+id/scan_format"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_above="@+id/barcode_result"
+        android:layout_alignParentStart="true" />
 
     <ImageView
         android:id="@+id/imageView"

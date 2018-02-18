@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="C:/Users/Daniel/Desktop/commons-dbcp2-2.2.0/commons-dbcp2-2.2.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Daniel/Desktop/commons-pool2-2.5.0/commons-pool2-2.5.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Daniel/Desktop/commons-logging-1.2/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

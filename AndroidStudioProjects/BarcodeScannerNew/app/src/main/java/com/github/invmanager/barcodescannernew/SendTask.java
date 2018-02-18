@@ -1,14 +1,8 @@
 package com.github.invmanager.barcodescannernew;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.widget.Toast;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -41,26 +35,18 @@ public class SendTask extends AsyncTask<String, Void, Void> {
             @Override
             public void run() {
                 try{
-                    s = new Socket("192.168.1.8", 7800);
-                    pw = new PrintWriter(s.getOutputStream());
-                    pw.write(message);
-                    pw.flush();
+                    s = new Socket("192.168.1.8", 7800);//initialises the socket with the IP and port
+                    pw = new PrintWriter(s.getOutputStream());//creates a PrintWriter object to store the data sent
+                    pw.write(message);//gets the message
+                    pw.flush();//and sends it to the stream
                 }
 
                 catch (IOException e){
                     e.printStackTrace();
                 }
-                pw.close();
+                pw.close();//closed
             }
         }).start();
-
-
-//        h.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                Toast.makeText(c,"Message sent",Toast.LENGTH_LONG).show();
-//            }
-//        });
 
 
 

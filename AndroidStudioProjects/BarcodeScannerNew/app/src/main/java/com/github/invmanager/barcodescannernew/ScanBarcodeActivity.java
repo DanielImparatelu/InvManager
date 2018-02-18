@@ -1,100 +1,137 @@
 package com.github.invmanager.barcodescannernew;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.util.SparseArray;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.widget.Toast;
+import android.support.annotation.NonNull;
+import android.view.KeyEvent;
+import android.view.View;
 
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
-
-import java.io.IOException;
+import com.journeyapps.barcodescanner.CaptureManager;
+import com.journeyapps.barcodescanner.DecoratedBarcodeView;
+import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 /**
- * Created by Daniel on 08/02/2018.
+ * Created by Daniel on 15/02/2018.
  */
 
 public class ScanBarcodeActivity extends Activity {
 
-    SurfaceView cameraPreview;
-    private static final int MY_PERMISSION_REQUEST_CAMERA = 2569;
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    private CaptureManager capture;
+    private DecoratedBarcodeView barcodeScannerView;
+    private View turnflashOn, turnflashOff;
+    CameraSettings settings;
+    private boolean cameraFlashOn = false;
+
+
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scan_barcode);
-        cameraPreview = (SurfaceView) findViewById(R.id.camera_preview);
-        createCameraSource();
+
+        barcodeScannerView = initializeContent();
+        TorchEventListener torchEventListener = new TorchEventListener(this);
+        barcodeScannerView.setTorchListener(torchEventListener);
+        barcodeScannerView.setHapticFeedbackEnabled(true);
+        turnflashOn = findViewById(R.id.switch_flashlight_on);
+        turnflashOff = findViewById(R.id.switch_flashlight_off);
+
+        settings = new CameraSettings();
+        settings.setFocusMode(CameraSettings.FocusMode.INFINITY);//set focus mode
+        // turn the flash on if set via intent
+        Intent scanIntent = getIntent();
+        if(scanIntent.hasExtra(appConstants.CAMERA_FLASH_ON)){
+            if(scanIntent.getBooleanExtra(appConstants.CAMERA_FLASH_ON,false)){
+                barcodeScannerView.setTorchOn();
+                updateView();
+            }
+        }
+
+        capture = new CaptureManager(this, barcodeScannerView);
+        capture.initializeFromIntent(getIntent(), savedInstanceState);
+        capture.decode();
     }
 
-    private void createCameraSource(){
 
-        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).build();
-        //building CameraSource and BarcodeDetector objects
-        final CameraSource cameraSource = new CameraSource.Builder(this, barcodeDetector)
-                .setAutoFocusEnabled(true)
-                .setRequestedPreviewSize(1600, 1024)//used to scan smaller barcodes or from a distance
-                .build();
+    /**
+     * Override to use a different layout.
+     *
+     * @return the DecoratedBarcodeView
+     */
+    protected DecoratedBarcodeView initializeContent() {
+        setContentView(R.layout.capture_flash);
+        //setContentView(com.google.zxing.client.android.R.layout.zxing_capture);
+        return (DecoratedBarcodeView)findViewById(com.google.zxing.client.android.R.id.zxing_barcode_scanner);
+    }
 
-        /* add callback  to SurfaceViewHolder to start and stop the cameraSource */
-        cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder surfaceHolder) {//on create method
+    //handlers for when the user exits the app either by pressing home or closing it
+    @Override
+    protected void onResume() {
+        super.onResume();
+        capture.onResume();
+    }
 
-                if(ActivityCompat.checkSelfPermission(ScanBarcodeActivity.this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){//check if the app has camera access permissions
-                    ActivityCompat.requestPermissions(ScanBarcodeActivity.this, new String[]{Manifest.permission.CAMERA},
-                            MY_PERMISSION_REQUEST_CAMERA);//if it doesn't it will ask the user to grant the permission
-                    return;
-                }
-                try {
-                    cameraSource.start(cameraPreview.getHolder());//start camera
-                    Toast toast = Toast.makeText(getApplicationContext(),"Position barcode in front of the camera",Toast.LENGTH_SHORT); toast.setMargin(50,50);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        capture.onPause();
+    }
 
-            }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        capture.onDestroy();
+    }
 
-            @Override
-            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        capture.onSaveInstanceState(outState);
+    }
 
-            }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        capture.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
-            @Override
-            public void surfaceDestroyed(SurfaceHolder surfaceHolder) { //on close method
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return barcodeScannerView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
+    }
 
-                cameraSource.stop();
-            }
-        });
-        //set barcode detector's processor to get detected barcodes
-        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
-            @Override
-            public void release() {
+    public void toggleFlash(View view){
+        if(cameraFlashOn){
+            barcodeScannerView.setTorchOff();
+        }else{
+            barcodeScannerView.setTorchOn();
+        }
+    }
 
-            }
+    public void updateView(){
+        if(cameraFlashOn){
+            turnflashOn.setVisibility(View.GONE);
+            turnflashOff.setVisibility(View.VISIBLE);
+        }else{
+            turnflashOn.setVisibility(View.VISIBLE);
+            turnflashOff.setVisibility(View.GONE);
+        }
+    }
 
-            @Override
-            public void receiveDetections(Detector.Detections<Barcode> detections) {
-                //store the detected values in an array
-                final SparseArray<Barcode> barcodes = detections.getDetectedItems();
-                //after detection sends it to the main activity
-                if(barcodes.size()>0){
-                    Intent intent = new Intent();
-                    intent.putExtra("barcode", barcodes.valueAt(0));//gets only the latest barcode
-                    setResult(CommonStatusCodes.SUCCESS, intent);
-                    //finish the activity and return to the main one
-                    finish();
-                }
-            }
-        });
+    class TorchEventListener implements DecoratedBarcodeView.TorchListener{
+        private ScanBarcodeActivity activity;
+
+        TorchEventListener(ScanBarcodeActivity activity){
+            this.activity = activity;
+        }
+
+        @Override
+        public void onTorchOn() {
+            this.activity.cameraFlashOn = true;
+            this.activity.updateView();
+        }
+
+        @Override
+        public void onTorchOff() {
+            this.activity.cameraFlashOn = false;
+            this.activity.updateView();
+        }
     }
 }
