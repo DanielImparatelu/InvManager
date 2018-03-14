@@ -2,43 +2,78 @@ package com.github.invmanager.barcodescannernew;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.ResultPoint;
+import com.google.zxing.client.android.BeepManager;
+import com.journeyapps.barcodescanner.BarcodeCallback;
+import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.CaptureManager;
+import com.journeyapps.barcodescanner.Decoder;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
+import com.journeyapps.barcodescanner.DefaultDecoderFactory;
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 
-import io.github.johncipponeri.outpanapi.OutpanAPI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
- * Created by Daniel on 15/02/2018.
+ * Created by Daniel on 06/03/2018.
  */
 
-public class ScanBarcodeActivity extends Activity {
+public class ScanContinuous extends Activity {
 
-  //  OutpanAPI api = new OutpanAPI()
     private CaptureManager capture;
     private DecoratedBarcodeView barcodeScannerView;
     private View turnflashOn, turnflashOff;
     CameraSettings settings;
+    private String lastText;
     private boolean cameraFlashOn = false;
+
+    private BarcodeCallback callback = new BarcodeCallback() {
+        @Override
+        public void barcodeResult(BarcodeResult result) {
+            if(result.getText() == null || result.getText().equals(lastText)) {
+                // Prevent duplicate scans
+                return;
+            }
+            lastText = result.getText();
+            barcodeScannerView.setStatusText(result.getText());
+
+         //   beepManager.playBeepSoundAndVibrate();
+
+            //Added preview of scanned barcode
+          //  ImageView imageView = (ImageView) findViewById(R.id.barcodePreview);
+         //   imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW));
+        }
+
+        @Override
+        public void possibleResultPoints(List<ResultPoint> resultPoints) {
+        }
+    };
+
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         barcodeScannerView = initializeContent();
-        TorchEventListener torchEventListener = new TorchEventListener(this);
+        ScanContinuous.TorchEventListener torchEventListener = new ScanContinuous.TorchEventListener(this);
         barcodeScannerView.setTorchListener(torchEventListener);
         barcodeScannerView.setHapticFeedbackEnabled(true);
         turnflashOn = findViewById(R.id.switch_flashlight_on);
         turnflashOff = findViewById(R.id.switch_flashlight_off);
 
         settings = new CameraSettings();
-        settings.setFocusMode(CameraSettings.FocusMode.INFINITY);//set focus mode
+        settings.setFocusMode(CameraSettings.FocusMode.MACRO);//set focus mode
         // turn the flash on if set via intent
         Intent scanIntent = getIntent();
         if(scanIntent.hasExtra(appConstants.CAMERA_FLASH_ON)){
@@ -47,6 +82,11 @@ public class ScanBarcodeActivity extends Activity {
                 updateView();
             }
         }
+
+        Collection<BarcodeFormat> formats = Arrays.asList(BarcodeFormat.QR_CODE, BarcodeFormat.CODE_39);
+        barcodeScannerView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory());
+        barcodeScannerView.decodeContinuous(callback);
+
 
         capture = new CaptureManager(this, barcodeScannerView);
         capture.initializeFromIntent(getIntent(), savedInstanceState);
@@ -60,7 +100,7 @@ public class ScanBarcodeActivity extends Activity {
      * @return the DecoratedBarcodeView
      */
     protected DecoratedBarcodeView initializeContent() {
-        setContentView(R.layout.capture_flash);
+        setContentView(R.layout.capture_continuous);
         //setContentView(com.google.zxing.client.android.R.layout.zxing_capture);
         return (DecoratedBarcodeView)findViewById(com.google.zxing.client.android.R.id.zxing_barcode_scanner);
     }
@@ -82,6 +122,18 @@ public class ScanBarcodeActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         capture.onDestroy();
+    }
+
+    public void pause(View view) {
+        barcodeScannerView.pause();
+    }
+
+    public void resume(View view) {
+        barcodeScannerView.resume();
+    }
+
+    public void triggerScan(View view) {
+        barcodeScannerView.decodeSingle(callback);
     }
 
     @Override
@@ -119,9 +171,9 @@ public class ScanBarcodeActivity extends Activity {
     }
 
     class TorchEventListener implements DecoratedBarcodeView.TorchListener{
-        private ScanBarcodeActivity activity;
+        private ScanContinuous activity;
 
-        TorchEventListener(ScanBarcodeActivity activity){
+        TorchEventListener(ScanContinuous activity){
             this.activity = activity;
         }
 

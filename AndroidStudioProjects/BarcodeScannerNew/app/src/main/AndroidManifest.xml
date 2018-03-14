@@ -14,8 +14,10 @@
 
     <!-- permissions to use TCP-IP to send data to the main program-->
     <!--potential need for the READ_EXTERNAL_STORAGE permission as well-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
    <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
 
 
@@ -53,6 +55,16 @@
             android:theme="@style/zxing_CaptureTheme"
             android:windowSoftInputMode="stateAlwaysHidden">
 
+        </activity>
+
+        <!--activity android:name=".JSONResult2"
+            android:label="Add Items"></activity>-->
+
+        <activity android:name=".ScanContinuous"
+            android:screenOrientation="fullSensor"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
 
     </application>

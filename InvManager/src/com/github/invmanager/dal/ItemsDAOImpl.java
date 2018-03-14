@@ -27,8 +27,8 @@ public class ItemsDAOImpl implements ItemsDAO {
 				items.setItemID(rs.getInt("Item_ID"));
 				items.setItemName(rs.getString("Item_Name"));
 				items.setItemQty(rs.getInt("Item_Quantity"));
-				items.setItemExpDate(rs.getString("Item_Exp_Date"));
-				items.setItemLastRestocked(rs.getString("Item_Last_Restocked"));
+				items.setItemExpDate(rs.getDate("Item_Exp_Date"));
+				items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
 
 				itemList.add(items);//and adds it to the arraylist
 			}
@@ -74,8 +74,8 @@ public class ItemsDAOImpl implements ItemsDAO {
 				items.setItemID(rs.getInt("Item_ID"));
 				items.setItemName(rs.getString("Item_Name"));
 				items.setItemQty(rs.getInt("Item_Quantity"));
-				items.setItemExpDate(rs.getString("Item_Exp_Date"));
-				items.setItemLastRestocked(rs.getString("Item_Last_Restocked"));
+				items.setItemExpDate(rs.getDate("Item_Exp_Date"));
+				items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
 				
 				itemList.add(items);
 				//return items;
@@ -123,8 +123,8 @@ public class ItemsDAOImpl implements ItemsDAO {
 				items.setItemID(rs.getInt("Item_ID"));
 				items.setItemName(rs.getString("Item_Name"));
 				items.setItemQty(rs.getInt("Item_Quantity"));
-				items.setItemExpDate(rs.getString("Item_Exp_Date"));
-				items.setItemLastRestocked(rs.getString("Item_Last_Restocked"));
+				items.setItemExpDate(rs.getDate("Item_Exp_Date"));
+				items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
 				itemList.add(items);
 
 			}

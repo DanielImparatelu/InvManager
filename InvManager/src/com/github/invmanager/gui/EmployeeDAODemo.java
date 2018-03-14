@@ -33,9 +33,9 @@ public class EmployeeDAODemo {
 		Items itemTest = new Items();
 		itemTest.setItemID(321123);
 		itemTest.setItemName("test3");
-		itemTest.setItemExpDate("2019-02-02");
-		itemTest.setItemLastRestocked("2018-01-01");
-		itemsDao.addItem(itemTest);
+		//itemTest.setItemExpDate("2019-02-02");
+		//itemTest.setItemLastRestocked("2018-01-01");
+		//itemsDao.addItem(itemTest);
 		//itemsDao.updateItems();
 		
 		//usersDao.deleteUser("Test UserName2");

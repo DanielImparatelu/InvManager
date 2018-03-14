@@ -1,10 +1,13 @@
 package com.github.invmanager.barcodescannernew;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.format.Formatter;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,16 +15,23 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.w3c.dom.Text;
+
+import java.util.Timer;
+
 /**
  * Created by Daniel on 08/02/2018.
  */
 
 public class MainActivity extends Activity {
 
-    private String codeFormat,codeContent;
+    public static String codeFormat,codeContent;
     TextView barcodeResult, formatTxt;
+    static TextView description;
     MediaPlayer mp;
+    static String ip;
 
+    public final int CUSTOMIZED_REQUEST_CODE = 0x0000ffff;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,6 +40,45 @@ public class MainActivity extends Activity {
         //barcodeResult = (TextView) findViewById(R.id.barcode_result);
         formatTxt = (TextView)findViewById(R.id.scan_format);
         barcodeResult = (TextView)findViewById(R.id.barcode_result);
+        description = (TextView)findViewById(R.id.description);
+        getIP();
+    }
+
+    private String getIP() {
+        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+        return ip;
+    }
+
+    public void getJson(View v) throws Exception{
+        JSONResult3 json = new JSONResult3();
+        json.execute();
+      // new JSONResult2().execute("https://api.upcdatabase.org/product/5000167081695/124C858366989F5CF18364FBE4561210");
+      //  new JSONResult2().execute("https://api.upcitemdb.com/prod/trial/lookup?upc=5000167081695");
+//        Thread.sleep(1000);
+//        Intent i = new Intent(MainActivity.this, JSONResult2.class);
+//        Thread.sleep(1000);
+//        startActivity(i);//start the new activity
+//        Thread.sleep(1000);
+
+    }
+
+    public void addItems(View v){
+
+        Intent intent = new Intent(this, ScanContinuous.class);
+        startActivity(intent);
+//        IntentIntegrator integrator = new IntentIntegrator(this);
+//        integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
+//        integrator.setBeepEnabled(false);
+//        //integrator.setPrompt(this.getString(R.string.scan_bar_code));
+//        integrator.setCaptureActivity(ScanContinuous.class);
+//        integrator.setOrientationLocked(false);
+//        //integrator.setResultDisplayDuration(0);
+//        integrator.setCameraId(0);  // Use a specific camera of the device
+//        integrator.setBarcodeImageEnabled(true);
+//        // set turn the camera flash on by default
+//        // integrator.addExtra(com.github.invmanager.barcodescannernew.appConstants.CAMERA_FLASH_ON,true);
+//        integrator.initiateScan();
     }
 
     private void playSound(){
@@ -46,6 +95,7 @@ public class MainActivity extends Activity {
 
     public void loginScanBarcode(View v){
         IntentIntegrator integrator = new IntentIntegrator(this);
+        Intent intent = new Intent("com.google.zxing.client.android.SCAN");
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
         integrator.setBeepEnabled(false);
         //integrator.setPrompt(this.getString(R.string.scan_bar_code));
@@ -62,6 +112,22 @@ public class MainActivity extends Activity {
     //override onActivityResult to get barcode from the scan activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+        if (requestCode != CUSTOMIZED_REQUEST_CODE && requestCode != IntentIntegrator.REQUEST_CODE) {
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, intent);
+            return;
+        }
+        switch (requestCode) {
+            case CUSTOMIZED_REQUEST_CODE: {
+                Toast.makeText(this, "REQUEST_CODE = " + requestCode, Toast.LENGTH_LONG).show();
+                break;
+            }
+            default:
+                break;
+        }
+
+
         //retrieve scan result
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 
@@ -71,7 +137,6 @@ public class MainActivity extends Activity {
                 codeContent = scanningResult.getContents();
                 codeFormat = scanningResult.getFormatName();
                 playSound();//once we have the result play the beep
-
                 // display it on screen
                 formatTxt.setText("FORMAT: " + codeFormat);
                 barcodeResult.setText("CONTENT: " + codeContent);

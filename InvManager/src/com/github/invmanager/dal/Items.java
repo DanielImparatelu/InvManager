@@ -46,12 +46,12 @@ public class Items {
 		this.itemQty = itemQty;
 	}
 	
-	public void setItemExpDate(String itemExpDate) {
-		this.itemExpDate = Date.valueOf(itemExpDate);
+	public void setItemExpDate(java.sql.Date expDate) {
+		this.itemExpDate = expDate;
 	}
 	
-	public void setItemLastRestocked(String itemLastRestocked) {
-		this.itemLastRestocked = Date.valueOf(itemLastRestocked);
+	public void setItemLastRestocked(Date itemLastRestocked) {
+		this.itemLastRestocked = itemLastRestocked;
 	}
 	
 	

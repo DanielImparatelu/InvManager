@@ -17,13 +17,15 @@
         android:text="Server Login" />
 
     <Button
-        android:id="@+id/add_items"
+        android:id="@+id/scan_results"
         style="@android:style/Widget.Material.Light.Button.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/scan_barcode"
-        android:text="Add Items//WIP" />
+        android:layout_alignTop="@+id/add_items"
+        android:layout_toRightOf="@id/add_items"
+        android:onClick="getJson"
+        android:text="Scan Results" />
 
     <TextView
         android:id="@+id/barcode_result"
@@ -63,12 +65,12 @@
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:gravity="center"
         android:text="InvBarcodeScanner"
         android:textAppearance="@android:style/TextAppearance.Material.Widget.ActionBar.Title"
-        android:textColor="#ffffff"/>
+        android:textColor="#ffffff" />
 
     <ImageView
         android:id="@+id/imageView4"
@@ -79,5 +81,16 @@
         android:adjustViewBounds="true"
         android:background="@color/colorPrimaryDark"
         app:srcCompat="@color/colorPrimaryDark" />
+
+    <Button
+        android:id="@+id/add_items"
+        style="@android:style/Widget.Material.Light.Button.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/scan_barcode"
+        android:layout_alignBottom="@+id/scan_barcode"
+        android:layout_toEndOf="@+id/scan_barcode"
+        android:onClick="addItems"
+        android:text="Add Items" />
 
 </RelativeLayout>

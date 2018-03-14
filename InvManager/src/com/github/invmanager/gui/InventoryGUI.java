@@ -7,18 +7,16 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Robot;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -31,12 +29,12 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
-import javax.swing.text.DateFormatter;
 
 import com.github.invmanager.dal.Items;
 import com.github.invmanager.dal.ItemsDAOImpl;
 import com.github.invmanager.dal.Users;
 import com.github.invmanager.dal.UsersDAOImpl;
+import com.mysql.fabric.Response;
 
 /*
  * @author Daniel Imparatelu
@@ -145,7 +143,7 @@ public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 						+item.getItemExpDate()+", last restocked = "+item.getitemLastRestocked()+"]"+"\n\n");
 			}
 		}
-		
+
 		else if(e.getSource().equals(btnExit)){
 			System.exit(0);
 		}
@@ -178,19 +176,14 @@ public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 	private final JLabel lblItemName = new JLabel("Item Name");
 	private final JLabel lblQuantity = new JLabel("Quantity");
 	private final JLabel lblExpiryDate = new JLabel("Expiry date");
-	private final JTextField idField = new JTextField();
-	private final JTextField itemNameField = new JTextField();
+	private final static JTextField idField = new JTextField();
+	private final static JTextField itemNameField = new JTextField();
 	private final JTextField itemQtyField = new JTextField();
-	 DateFormat format = new SimpleDateFormat("dd-MMMM-yyyy");
-     DateFormatter df = new DateFormatter(format);
-	private final JFormattedTextField itemExpDateField = new JFormattedTextField(df);
-	
+	private final JFormattedTextField itemExpDateField = new JFormattedTextField();	
 	private final JButton btnAdd = new JButton("Add");
 	private final JButton btnBack = new JButton("Back");
 	private final JLabel lblLastRestocked = new JLabel("Last restocked");
 	private final JTextField itemLastRestocked = new JTextField();
-
-	
 
 	public InventoryGUI() {
 
@@ -395,13 +388,13 @@ public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 		gbl_addItemWindow.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
 		gbl_addItemWindow.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		addItemWindow.setLayout(gbl_addItemWindow);
-		
+
 		GridBagConstraints gbc_lblItemId = new GridBagConstraints();
 		gbc_lblItemId.insets = new Insets(0, 0, 5, 5);
 		gbc_lblItemId.gridx = 2;
 		gbc_lblItemId.gridy = 2;
 		addItemWindow.add(lblItemId, gbc_lblItemId);
-		
+
 		GridBagConstraints gbc_idField = new GridBagConstraints();
 		gbc_idField.gridwidth = 2;
 		gbc_idField.insets = new Insets(0, 0, 5, 5);
@@ -409,13 +402,13 @@ public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 		gbc_idField.gridx = 3;
 		gbc_idField.gridy = 2;
 		addItemWindow.add(idField, gbc_idField);
-		
+
 		GridBagConstraints gbc_lblItemName = new GridBagConstraints();
 		gbc_lblItemName.insets = new Insets(0, 0, 5, 5);
 		gbc_lblItemName.gridx = 2;
 		gbc_lblItemName.gridy = 3;
 		addItemWindow.add(lblItemName, gbc_lblItemName);
-		
+
 		GridBagConstraints gbc_itemNameField = new GridBagConstraints();
 		gbc_itemNameField.gridwidth = 2;
 		gbc_itemNameField.insets = new Insets(0, 0, 5, 5);
@@ -423,13 +416,13 @@ public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 		gbc_itemNameField.gridx = 3;
 		gbc_itemNameField.gridy = 3;
 		addItemWindow.add(itemNameField, gbc_itemNameField);
-		
+
 		GridBagConstraints gbc_lblQuantity = new GridBagConstraints();
 		gbc_lblQuantity.insets = new Insets(0, 0, 5, 5);
 		gbc_lblQuantity.gridx = 2;
 		gbc_lblQuantity.gridy = 4;
 		addItemWindow.add(lblQuantity, gbc_lblQuantity);
-		
+
 		GridBagConstraints gbc_itemQtyField = new GridBagConstraints();
 		gbc_itemQtyField.gridwidth = 2;
 		gbc_itemQtyField.insets = new Insets(0, 0, 5, 5);
@@ -437,22 +430,21 @@ public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 		gbc_itemQtyField.gridx = 3;
 		gbc_itemQtyField.gridy = 4;
 		addItemWindow.add(itemQtyField, gbc_itemQtyField);
-		
+
 		GridBagConstraints gbc_lblExpiryDate = new GridBagConstraints();
 		gbc_lblExpiryDate.insets = new Insets(0, 0, 5, 5);
 		gbc_lblExpiryDate.gridx = 2;
 		gbc_lblExpiryDate.gridy = 5;
 		addItemWindow.add(lblExpiryDate, gbc_lblExpiryDate);
-		
+
 		GridBagConstraints gbc_itemExpDateField = new GridBagConstraints();
 		gbc_itemExpDateField.gridwidth = 2;
 		gbc_itemExpDateField.insets = new Insets(0, 0, 5, 5);
 		gbc_itemExpDateField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_itemExpDateField.gridx = 3;
 		gbc_itemExpDateField.gridy = 5;
-		itemExpDateField.setValue(new Date());
 		addItemWindow.add(itemExpDateField, gbc_itemExpDateField);
-		
+
 		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
 		gbc_btnAdd.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnAdd.insets = new Insets(0, 0, 5, 5);
@@ -463,17 +455,22 @@ public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				addItemToDb();
+				try {
+					addItemToDb();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			
+
 		});
-		
+
 		GridBagConstraints gbc_lblLastRestocked = new GridBagConstraints();
 		gbc_lblLastRestocked.insets = new Insets(0, 0, 5, 5);
 		gbc_lblLastRestocked.gridx = 2;
 		gbc_lblLastRestocked.gridy = 6;
 		addItemWindow.add(lblLastRestocked, gbc_lblLastRestocked);
-		
+
 		GridBagConstraints gbc_itemLastRestocked = new GridBagConstraints();
 		gbc_itemLastRestocked.gridwidth = 2;
 		gbc_itemLastRestocked.insets = new Insets(0, 0, 5, 5);
@@ -482,7 +479,7 @@ public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 		gbc_itemLastRestocked.gridy = 6;
 		addItemWindow.add(itemLastRestocked, gbc_itemLastRestocked);
 		addItemWindow.add(btnAdd, gbc_btnAdd);
-		
+
 		GridBagConstraints gbc_btnBack = new GridBagConstraints();
 		gbc_btnBack.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnBack.insets = new Insets(0, 0, 5, 5);
@@ -496,46 +493,48 @@ public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 				addItemWindow.setVisible(false);
 				mainWindow.setVisible(true);
 			}
-			
+
 		});
 		addItemWindow.add(btnBack, gbc_btnBack);
 	}
-	
-	public void addItemToDb() {
-		
+
+	public void addItemToDb() throws Exception {
+
 		int itemID = Integer.valueOf(idField.getText());
 		String itemName = itemNameField.getText();
-		String itemExpDate = itemExpDateField.getText();
-		String itemLastRestocked2 = itemLastRestocked.getText();
 		int itemQty = Integer.valueOf(itemQtyField.getText());
-		
+		String itemExpDateText = itemExpDateField.getText();
+		String itemLastRestockedText = itemLastRestocked.getText();
+
+		java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("d-M-yyyy");
+		java.time.LocalDate expFieldAsDate = java.time.LocalDate.parse(itemExpDateText,formatter);
+		java.time.LocalDate restockedFieldAsDate = java.time.LocalDate.parse(itemLastRestockedText,formatter);
+
+		java.sql.Date expDate = java.sql.Date.valueOf(expFieldAsDate);
+		java.sql.Date restockedDate = java.sql.Date.valueOf(restockedFieldAsDate);
+
+
 		Items item = new Items();
 		item.setItemID(itemID);
 		item.setItemName(itemName);
-		item.setItemExpDate(itemExpDate);
-		item.setItemLastRestocked(itemLastRestocked2);
+		item.setItemExpDate(expDate);
+		item.setItemLastRestocked(restockedDate);
 		item.setItemQty(itemQty);
 		itemsDAO.addItem(item);
+		idField.setText("");
+		itemNameField.setText("");
+		itemQtyField.setText("");
+		itemExpDateField.setText("");
+		itemLastRestocked.setText("");
 	}
-
 
 	public void run() {//method implemented by the Runnable interface
 
-		try {
-			Robot robot = new Robot();//new instance of Robot class to simulate key presses
-			do {
-				//robot.keyPress(KeyEvent.VK_ENTER);//simulate Enter press to login
-				Thread.sleep(500);
-			}
-			while(!mainWindow.isVisible());//when the main window is visible the thread stops
 
-		} catch (Exception e) {
-			System.out.println("Thread interrupted.");
-		}
-		System.out.println("Thread exiting.");
+
 	}
 
-	public static void main(String [] args) {
+	public static void main(String [] args) throws Exception {
 		InventoryGUI gui = new InventoryGUI();
 		gui.setVisible(true);
 
@@ -545,17 +544,26 @@ public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 
 		try//open the server so the Android app can connect
 		{
-			serverSocket = new ServerSocket(7800);//create a new server on port 7800
-			System.out.println("Socket server open");
-			while(true) {//infinite loop so that the server stays open
+			while(true) {
+				serverSocket = new ServerSocket(7800);//create a new server on port 7800
+				/*
+				 * Java NMAP nmap4j.sourceforge.net
+				 * API to check what ports are open on local connection and return java objects
+				 * use instead of hardcoded port
+				 */
 				socket = serverSocket.accept();//wait until a client connects
-				isr = new InputStreamReader(socket.getInputStream());//get the value of the scan
-				br = new BufferedReader(isr);//read the input using a Buffered Reader
-				message = br.readLine();//and convert it to a String object
-				System.out.println(message);
-				cardField.setText(message);
-			}
+				System.out.println("Socket server open");
+				while(true) {//infinite loop so that the server stays open
 
+					isr = new InputStreamReader(socket.getInputStream());//get the value of the scan
+					br = new BufferedReader(isr);//read the input using a Buffered Reader
+					message = br.readLine();//and convert it to a String object
+					System.out.println(message);
+					cardField.setText(message);
+					idField.setText(message);
+					itemNameField.setText(message);
+				}
+			}
 		}
 		catch (IOException e)
 		{
@@ -563,7 +571,7 @@ public class InventoryGUI extends JFrame implements ActionListener, Runnable {
 		}
 
 	}
-	
+
+
+
 }
-
-
