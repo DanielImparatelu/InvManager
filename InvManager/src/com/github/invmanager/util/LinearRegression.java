@@ -2,6 +2,11 @@ package com.github.invmanager.util;
 
 import java.util.Scanner;
 
+/*
+ * Code from princeton.edu
+ * https://introcs.cs.princeton.edu/java/97data/LinearRegression.java.html
+ */
+
 public class LinearRegression { 
 
     public static void main(String[] args) { 
