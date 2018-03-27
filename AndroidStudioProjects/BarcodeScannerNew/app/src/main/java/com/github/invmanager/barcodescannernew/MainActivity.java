@@ -8,16 +8,13 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.format.Formatter;
+
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import org.w3c.dom.Text;
-
-import java.util.Timer;
 
 /**
  * Created by Daniel on 08/02/2018.
@@ -45,21 +42,18 @@ public class MainActivity extends Activity {
     }
 
     private String getIP() {
+        //https://stackoverflow.com/questions/16730711/get-my-wifi-ip-address-android
         WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+        ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());//deprecated, but still kind of works so that's good enough
         return ip;
     }
 
     public void getJson(View v) throws Exception{
+        v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);//fix DeadObjectException bug in android 6
+        //from https://stackoverflow.com/questions/33128039/android-6-0-marshmallow-weird-error-with-fragment-animation
+
         JSONResult3 json = new JSONResult3();
         json.execute();
-      // new JSONResult2().execute("https://api.upcdatabase.org/product/5000167081695/124C858366989F5CF18364FBE4561210");
-      //  new JSONResult2().execute("https://api.upcitemdb.com/prod/trial/lookup?upc=5000167081695");
-//        Thread.sleep(1000);
-//        Intent i = new Intent(MainActivity.this, JSONResult2.class);
-//        Thread.sleep(1000);
-//        startActivity(i);//start the new activity
-//        Thread.sleep(1000);
 
     }
 
@@ -91,21 +85,20 @@ public class MainActivity extends Activity {
         });//after completion change to end state
         mp.start();//play the sound
     }
-    //add event to the barcode scanner button
 
+    //add event to the barcode scanner button
     public void loginScanBarcode(View v){
         IntentIntegrator integrator = new IntentIntegrator(this);
         Intent intent = new Intent("com.google.zxing.client.android.SCAN");
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
-        integrator.setBeepEnabled(false);
-        //integrator.setPrompt(this.getString(R.string.scan_bar_code));
-        integrator.setCaptureActivity(ScanBarcodeActivity.class);
+        integrator.setBeepEnabled(false);//disable the default beep, because it's annoying
+
+        integrator.setCaptureActivity(ScanBarcodeActivity.class);//set the ScanBarcodeActivity class as the capture activity
         integrator.setOrientationLocked(false);
-        //integrator.setResultDisplayDuration(0);
-        integrator.setCameraId(0);  // Use a specific camera of the device
+
+        integrator.setCameraId(0);  // Use a specific camera of the device, in this case the back camera
         integrator.setBarcodeImageEnabled(true);
-        // set turn the camera flash on by default
-        // integrator.addExtra(com.github.invmanager.barcodescannernew.appConstants.CAMERA_FLASH_ON,true);
+
         integrator.initiateScan();
     }
 
@@ -126,8 +119,6 @@ public class MainActivity extends Activity {
             default:
                 break;
         }
-
-
         //retrieve scan result
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 
@@ -137,9 +128,12 @@ public class MainActivity extends Activity {
                 codeContent = scanningResult.getContents();
                 codeFormat = scanningResult.getFormatName();
                 playSound();//once we have the result play the beep
+
                 // display it on screen
                 formatTxt.setText("FORMAT: " + codeFormat);
                 barcodeResult.setText("CONTENT: " + codeContent);
+                JSONResult3 jsonResult = new JSONResult3();
+                jsonResult.execute();
 
                 SendTask sendTask = new SendTask(this);//create the object to send the scanned results
                 sendTask.execute(codeContent);//execute the method giving it the result of the barcode as parameter to send to server
@@ -148,8 +142,8 @@ public class MainActivity extends Activity {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             }
         }else{
-            Toast toast = Toast.makeText(getApplicationContext(),"No scan data received!", Toast.LENGTH_SHORT);
-            toast.show();
+            Toast.makeText(getApplicationContext(),"No scan data received!", Toast.LENGTH_SHORT).show();
+
         }
     }
 }

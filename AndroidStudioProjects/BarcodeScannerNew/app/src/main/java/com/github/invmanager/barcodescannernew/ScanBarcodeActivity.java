@@ -11,15 +11,13 @@ import com.journeyapps.barcodescanner.CaptureManager;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 
-import io.github.johncipponeri.outpanapi.OutpanAPI;
-
 /**
  * Created by Daniel on 15/02/2018.
+ * Single item scanning class
  */
 
 public class ScanBarcodeActivity extends Activity {
 
-  //  OutpanAPI api = new OutpanAPI()
     private CaptureManager capture;
     private DecoratedBarcodeView barcodeScannerView;
     private View turnflashOn, turnflashOff;
@@ -41,16 +39,16 @@ public class ScanBarcodeActivity extends Activity {
         settings.setFocusMode(CameraSettings.FocusMode.INFINITY);//set focus mode
         // turn the flash on if set via intent
         Intent scanIntent = getIntent();
-        if(scanIntent.hasExtra(appConstants.CAMERA_FLASH_ON)){
-            if(scanIntent.getBooleanExtra(appConstants.CAMERA_FLASH_ON,false)){
-                barcodeScannerView.setTorchOn();
-                updateView();
+        if(scanIntent.hasExtra(appConstants.CAMERA_FLASH_ON)){//get the camera flash on const
+            if(scanIntent.getBooleanExtra(appConstants.CAMERA_FLASH_ON,false)){//and check if the flash is off
+                barcodeScannerView.setTorchOn();//and set it to on
+                updateView();//update view interchanges the flash on and off buttons
             }
         }
 
-        capture = new CaptureManager(this, barcodeScannerView);
+        capture = new CaptureManager(this, barcodeScannerView);//instantiate the zxing capture manager intent
         capture.initializeFromIntent(getIntent(), savedInstanceState);
-        capture.decode();
+        capture.decode();//starts scanning
     }
 
 

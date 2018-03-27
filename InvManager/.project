@@ -14,4 +14,31 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>res/commons-dbcp2-2.2.0.jar</name>
+			<type>1</type>
+			<location>C:/Users/Daniel/Desktop/Uni Year 3/UG Project/InvManager/res/commons-dbcp2-2.2.0.jar</location>
+		</link>
+		<link>
+			<name>res/commons-logging-1.2.jar</name>
+			<type>1</type>
+			<location>C:/Users/Daniel/Desktop/Uni Year 3/UG Project/InvManager/res/commons-logging-1.2.jar</location>
+		</link>
+		<link>
+			<name>res/commons-pool2-2.5.0.jar</name>
+			<type>1</type>
+			<location>C:/Users/Daniel/Desktop/Uni Year 3/UG Project/InvManager/res/commons-pool2-2.5.0.jar</location>
+		</link>
+		<link>
+			<name>res/jgoodies-forms-1.8.0.jar</name>
+			<type>1</type>
+			<location>C:/Users/Daniel/Desktop/Uni Year 3/UG Project/InvManager/res/jgoodies-forms-1.8.0.jar</location>
+		</link>
+		<link>
+			<name>res/mysql-connector-java-5.1.45-bin.jar</name>
+			<type>1</type>
+			<location>C:/Users/Daniel/Desktop/Uni Year 3/UG Project/InvManager/res/mysql-connector-java-5.1.45-bin.jar</location>
+		</link>
+	</linkedResources>
 </projectDescription>

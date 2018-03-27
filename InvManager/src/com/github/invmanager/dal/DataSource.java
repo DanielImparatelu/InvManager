@@ -8,6 +8,12 @@ import org.apache.commons.dbcp2.datasources.*;
  * This class manages the connection to the external data source using the Apache DBCP Library
  * This connection pooling method is used in order to avoid acquiring physical connections each time data is requested,
  * for performance reasons.
+ * 
+ * Using a database driver to connect to an Internet server is bad practice, and should never be used, as I just found out
+ * It causes latency and cannot deal with potential problems such as the server being down
+ * Instead I should have opted for a SOAP or RESTful web service to communicate with the server
+ * But I found this out late in the project and did not have time to redesign the whole DAL
+ * Which is why the program is a lot slower than it should be
  */
 public class DataSource {
 /*
