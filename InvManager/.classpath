@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="res/commons-pool2-2.5.0.jar"/>
 	<classpathentry kind="lib" path="res/jgoodies-forms-1.8.0.jar"/>
 	<classpathentry kind="lib" path="res/mysql-connector-java-5.1.45-bin.jar"/>
+	<classpathentry kind="lib" path="res/sqlite-jdbc-3.21.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

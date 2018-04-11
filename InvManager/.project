@@ -40,5 +40,10 @@
 			<type>1</type>
 			<location>C:/Users/Daniel/Desktop/Uni Year 3/UG Project/InvManager/res/mysql-connector-java-5.1.45-bin.jar</location>
 		</link>
+		<link>
+			<name>res/sqlite-jdbc-3.21.0.jar</name>
+			<type>1</type>
+			<location>C:/Users/Daniel/Desktop/Uni Year 3/UG Project/InvManager/res/sqlite-jdbc-3.21.0.jar</location>
+		</link>
 	</linkedResources>
 </projectDescription>

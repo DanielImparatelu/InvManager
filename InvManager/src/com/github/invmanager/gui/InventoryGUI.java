@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -31,6 +32,7 @@ import com.github.invmanager.dal.Items;
 import com.github.invmanager.dal.ItemsDAOImpl;
 import com.github.invmanager.dal.Users;
 import com.github.invmanager.dal.UsersDAOImpl;
+import com.github.invmanager.util.ItemPrediction;
 
 /*
  * @author Daniel Imparatelu
@@ -46,12 +48,12 @@ public class InventoryGUI extends JFrame implements ActionListener {
 	private static ServerSocket serverSocket;
 	private static InputStreamReader isr;
 	private static BufferedReader br;
-	private static String message;
+	public static String message;
 
 	private static final long serialVersionUID = 1L;
 
 	Items items = new Items();
-	ItemsDAOImpl itemsDAO = new ItemsDAOImpl();
+	static ItemsDAOImpl itemsDAO = new ItemsDAOImpl();
 
 	Users users = new Users();
 	UsersDAOImpl usersDAO = new UsersDAOImpl();
@@ -80,7 +82,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 
 			for (Users users : usersDAO.getAllUsers()) {
 				System.out.println("User Name = " + users.getName() + ", Password = " + users.getPassword()
-						+ ", is admin = " + users.getIsAdmin());
+				+ ", is admin = " + users.getIsAdmin());
 			}
 		}
 
@@ -99,7 +101,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 			String inputUName = userNameField.getText();
 			char[] inputCharField = passwordField.getPassword();// get text as a character array
 			String inputPassField = new String(inputCharField);// converting the char input from the password field into
-																// a string so I can match it against the database value
+			// a string so I can match it against the database value
 
 			char[] inputCard = cardField.getPassword();
 			String inputCardField = new String(inputCard);
@@ -115,13 +117,13 @@ public class InventoryGUI extends JFrame implements ActionListener {
 			// Username and password login statement
 			else {
 				for (Users user : usersDAO.retrieveUser(inputUName, inputPassField)) {// for each loop to retrieve
-																						// results
+					// results
 
 					String dbUName = user.getName();// retrieves the username and password from the database
 					String dbUPass = user.getPassword();
 
 					if (inputUName.equals(dbUName) && (inputPassField.equals(dbUPass))) {// and compares them to the
-																							// inputs
+						// inputs
 						startWindow.setVisible(false);
 						mainWindow.setVisible(true);
 					}
@@ -182,12 +184,12 @@ public class InventoryGUI extends JFrame implements ActionListener {
 	private final JLabel lblExpiryDate = new JLabel("Expiry date");
 	private final static JTextField idField = new JTextField();
 	private final static JTextField itemNameField = new JTextField();
-	private final JTextField itemQtyField = new JTextField();
-	private final JFormattedTextField itemExpDateField = new JFormattedTextField();
+	private final static JTextField itemQtyField = new JTextField();
+	private final static JFormattedTextField itemExpDateField = new JFormattedTextField();
 	private final JButton btnAdd = new JButton("Add");
 	private final JButton btnBack = new JButton("Back");
 	private final JLabel lblLastRestocked = new JLabel("Last restocked");
-	private final JTextField itemLastRestocked = new JTextField();
+	private final static JTextField itemLastRestocked = new JTextField();
 	private final static JPanel receiptWindow = new JPanel();
 	private final JTextArea receiptText = new JTextArea();
 	private final JButton btnReceipt = new JButton("Receipt");
@@ -312,7 +314,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		textArea.setFont(new Font("Arial", Font.BOLD, 12));
 		textArea.setEditable(false);
 		scrollPane
-				.setViewportBorder(new EtchedBorder(EtchedBorder.RAISED, new Color(255, 0, 0), new Color(64, 64, 64)));
+		.setViewportBorder(new EtchedBorder(EtchedBorder.RAISED, new Color(255, 0, 0), new Color(64, 64, 64)));
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.gridwidth = 3;
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
@@ -454,7 +456,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbc_lblExpiryDate.insets = new Insets(0, 0, 5, 5);
 		gbc_lblExpiryDate.gridx = 2;
 		gbc_lblExpiryDate.gridy = 5;
-		addItemWindow.add(lblExpiryDate, gbc_lblExpiryDate);
+		//	addItemWindow.add(lblExpiryDate, gbc_lblExpiryDate);
 
 		GridBagConstraints gbc_itemExpDateField = new GridBagConstraints();
 		gbc_itemExpDateField.gridwidth = 2;
@@ -462,7 +464,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbc_itemExpDateField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_itemExpDateField.gridx = 3;
 		gbc_itemExpDateField.gridy = 5;
-		addItemWindow.add(itemExpDateField, gbc_itemExpDateField);
+		//	addItemWindow.add(itemExpDateField, gbc_itemExpDateField);
 
 		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
 		gbc_btnAdd.fill = GridBagConstraints.HORIZONTAL;
@@ -488,7 +490,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbc_lblLastRestocked.insets = new Insets(0, 0, 5, 5);
 		gbc_lblLastRestocked.gridx = 2;
 		gbc_lblLastRestocked.gridy = 6;
-		addItemWindow.add(lblLastRestocked, gbc_lblLastRestocked);
+		//addItemWindow.add(lblLastRestocked, gbc_lblLastRestocked);
 
 		GridBagConstraints gbc_itemLastRestocked = new GridBagConstraints();
 		gbc_itemLastRestocked.gridwidth = 2;
@@ -496,7 +498,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbc_itemLastRestocked.fill = GridBagConstraints.HORIZONTAL;
 		gbc_itemLastRestocked.gridx = 3;
 		gbc_itemLastRestocked.gridy = 6;
-		addItemWindow.add(itemLastRestocked, gbc_itemLastRestocked);
+		//addItemWindow.add(itemLastRestocked, gbc_itemLastRestocked);
 		addItemWindow.add(btnAdd, gbc_btnAdd);
 
 		GridBagConstraints gbc_btnBack = new GridBagConstraints();
@@ -562,9 +564,9 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		receiptWindow.add(btnReceipt, gbc_btnReceipt);
 	}
 
-	public void addItemToDb() throws Exception {
+	public static void addItemToDb() throws Exception {
 
-		int itemID = Integer.valueOf(idField.getText());
+		String itemID = idField.getText();
 		String itemName = itemNameField.getText();
 		int itemQty = Integer.valueOf(itemQtyField.getText());
 		String itemExpDateText = itemExpDateField.getText();
@@ -591,9 +593,13 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		itemLastRestocked.setText("");
 	}
 
+	static String scannedItemName;
+	static int scannedItemQty;
+	static String scannedItemID;
 	public static void main(String[] args) {
 		InventoryGUI gui = new InventoryGUI();
 		gui.setVisible(true);
+		Items scannedItem = new Items();
 
 		try// open the server so the Android app can connect
 		{
@@ -610,33 +616,72 @@ public class InventoryGUI extends JFrame implements ActionListener {
 				isr = new InputStreamReader(socket.getInputStream());// get the value of the scan
 				br = new BufferedReader(isr);// read the input using a Buffered Reader
 				message = br.readLine();// and convert it to a String object
+				
 				System.out.println(message);
-				// if(message.equals("5000167081695")) {
-				// mainWindow.setVisible(false);
-				// receiptWindow.setVisible(true);
-				// }
-				if (message.matches("[0-9]+")) {// check if the message is a number(barcode) and not any other text
+				
+				String id = String.valueOf(scannedItem.getItemID());
+				
+				if(message.matches("[a-zA-Z]+")) {
+					//TODO currently the only scanned input read is the barcode value, and not the name of the item
+					//make it so that the item name is read and sent to the database
+					scannedItemName = message;
+					//scannedItemQty += scannedItemQty;
+
+					//scannedItem.setItemID(message);
+					ItemPrediction pred = new ItemPrediction();
+					pred.execute();
+				}
+
+				else if (message.matches("[0-9]+")) {// check if the message is a number(barcode) and not any other text
 					mainWindow.setVisible(false);
 					receiptWindow.setVisible(true);
-					//implement this class, so that when the user scans an item
-					//it provides info on how many there are in the database,
-					//how many have been sold in the past week
-					//and prediction for how many will be sold in the coming week
-					// SingleItem single = new SingleItem(message);
-					// show some text
+					scannedItem.setItemID(message);
+					if(id == message) {
+						//scannedItem.setItemQty(scannedItem.getItemQty()+1);
+						//TODO:
+						//Update statement in the DAL to update only the quantity
+						
+						itemsDAO.updateItems(scannedItem);
+					}
+					else{
+						//terrible code but it works
+						try {
+							if(scannedItem.getItemID().equals(message)) {
+								itemsDAO.updateItems(scannedItem);
+							}
+							else {
+								//scannedItem.setItemID(message);
+								//scannedItem.setItemName(scannedItemName);
+								//scannedItem.setItemQty(scannedItemQty);
+								itemsDAO.addItem(scannedItem);
+							}
+							
+						}
+						catch(Exception e) {
+							e.printStackTrace();
+						}
+						
+						
+
+					}
 
 				}
 
-				if (message.equals("password")) {
+				else if (message.equals("password")) {
+					cardField.setText(message);
 					startWindow.setVisible(false);// hide the login screen
 					mainWindow.setVisible(true);// show the main screen
 				}
-				cardField.setText(message);
-				// idField.setText(message);
-				//itemNameField.setText(message);
+				
+				
+				
 
 			}
+
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

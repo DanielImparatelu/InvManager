@@ -84,6 +84,7 @@ public class JSONResult3 extends AsyncTask<Void,Void,Void> {
              * The api returns information about a product in 2 name-value pairs: "title", and "description"
              * Sometimes one of those pairs is empty, while the other contains information
              * The following code checks both strings and if either is empty, it returns the other one
+             * If both are empty, the code above calls the execute() method of the second JSON class
              */
             if(parsedData.equals("")){
                 MainActivity.description.append(this.title);

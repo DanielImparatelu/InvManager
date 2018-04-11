@@ -8,7 +8,7 @@ import java.sql.Date;
  */
 public class Items {
 
-	private int itemID;
+	private String itemID;
 	private String itemName;
 	private int itemQty;
 	private java.sql.Date itemExpDate;
@@ -26,15 +26,15 @@ public class Items {
 //		this.itemLastRestocked = itemLastRestocked;
 //	}
 	
-	public Items(int itemID, String itemName, int itemQty, String itemExpDate, String itemLastRestocked) {
+	public Items(String itemID, String itemName, int itemQty, String itemExpDate, String itemLastRestocked) {
 		this.itemID = itemID;
 		this.itemName = itemName;
 		this.itemQty = itemQty;
-		this.itemExpDate = Date.valueOf(itemExpDate);
-		this.itemLastRestocked = Date.valueOf(itemLastRestocked);
+		//this.itemExpDate = Date.valueOf(itemExpDate);
+		//this.itemLastRestocked = Date.valueOf(itemLastRestocked);
 	}
 	
-	public void setItemID(int itemID) {
+	public void setItemID(String itemID) {
 		this.itemID = itemID;
 	}
 	
@@ -55,7 +55,7 @@ public class Items {
 	}
 	
 	
-	public int getItemID() {
+	public String getItemID() {
 		return itemID;
 	}
 	

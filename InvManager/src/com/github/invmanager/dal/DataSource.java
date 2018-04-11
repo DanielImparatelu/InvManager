@@ -1,6 +1,7 @@
 package com.github.invmanager.dal;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbcp2.datasources.*;
@@ -27,10 +28,16 @@ public class DataSource {
 		 * construct the data source object with the SQL driver used, URL address of the database,
 		 * username and password as parameters
 		 */
-		bds.setDriverClassName("com.mysql.jdbc.Driver");
-		bds.setUrl("jdbc:mysql://sql2.freemysqlhosting.net:3306/sql2216024");
-		bds.setUsername("sql2216024");
-		bds.setPassword("dN7%qI2%");
+//		bds.setDriverClassName("com.mysql.jdbc.Driver");
+//		bds.setUrl("jdbc:mysql://sql2.freemysqlhosting.net:3306/sql2216024");
+//		bds.setUsername("sql2216024");
+//		bds.setPassword("dN7%qI2%");
+		bds.setDriverClassName("org.sqlite.JDBC");
+		bds.setUrl("jdbc:sqlite:./../test.db");
+
+		//Class.forName("org.sqlite.JDBC");//loads the jdbc driver into the driver manager
+		//con = DriverManager.getConnection("jdbc:sqlite:./../rm1.db");
+		//initialise();
 	}
 	
 	public Connection createConnection() {

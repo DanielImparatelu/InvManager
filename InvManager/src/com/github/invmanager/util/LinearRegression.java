@@ -66,5 +66,6 @@ public class LinearRegression {
         System.out.println("SSTO = " + yybar);
         System.out.println("SSE  = " + rss);
         System.out.println("SSR  = " + ssr);
+        scanner.close();
     }
 }

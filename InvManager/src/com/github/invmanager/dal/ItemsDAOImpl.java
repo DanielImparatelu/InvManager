@@ -24,11 +24,11 @@ public class ItemsDAOImpl implements ItemsDAO {
 			while(rs.next()) {//loops through the resultset and retrieves the data
 				Items items = new Items();
 
-				items.setItemID(rs.getInt("Item_ID"));
+				items.setItemID(rs.getString("Item_ID"));
 				items.setItemName(rs.getString("Item_Name"));
 				items.setItemQty(rs.getInt("Item_Quantity"));
-				items.setItemExpDate(rs.getDate("Item_Exp_Date"));
-				items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
+				//items.setItemExpDate(rs.getDate("Item_Exp_Date"));
+				//items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
 
 				itemList.add(items);//and adds it to the arraylist
 			}
@@ -71,11 +71,11 @@ public class ItemsDAOImpl implements ItemsDAO {
 			while(rs.next()) {//loop through the result set and return the results
 				Items items = new Items();
 
-				items.setItemID(rs.getInt("Item_ID"));
+				items.setItemID(rs.getString("Item_ID"));
 				items.setItemName(rs.getString("Item_Name"));
 				items.setItemQty(rs.getInt("Item_Quantity"));
-				items.setItemExpDate(rs.getDate("Item_Exp_Date"));
-				items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
+			//	items.setItemExpDate(rs.getDate("Item_Exp_Date"));
+				//items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
 				
 				itemList.add(items);
 				//return items;
@@ -120,11 +120,11 @@ public class ItemsDAOImpl implements ItemsDAO {
 			while(rs.next()) {//loop through the result set and return the results
 				Items items = new Items();
 
-				items.setItemID(rs.getInt("Item_ID"));
+				items.setItemID(rs.getString("Item_ID"));
 				items.setItemName(rs.getString("Item_Name"));
 				items.setItemQty(rs.getInt("Item_Quantity"));
-				items.setItemExpDate(rs.getDate("Item_Exp_Date"));
-				items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
+				//items.setItemExpDate(rs.getDate("Item_Exp_Date"));
+			//	items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
 				itemList.add(items);
 
 			}
@@ -159,13 +159,15 @@ public class ItemsDAOImpl implements ItemsDAO {
 		try {
 			DataSource ds = new DataSource();
 			con = ds.createConnection();
-			ps = con.prepareStatement("INSERT INTO ITEMS_DATA(Item_ID, Item_Name, Item_Quantity, Item_Exp_Date, Item_Last_Restocked) "
-					+"VALUES (?,?,?,?,?)");//sql PreparedStatement
-			ps.setInt(1, item.getItemID());//assigning parameters to the statement
+//			ps = con.prepareStatement("INSERT INTO ITEMS_DATA(Item_ID, Item_Name, Item_Quantity, Item_Exp_Date, Item_Last_Restocked) "
+//					+"VALUES (?,?,?,?,?)");//sql PreparedStatement
+			ps = con.prepareStatement("INSERT INTO ITEMS_DATA(Item_ID, Item_Name, Item_Quantity) "
+					+"VALUES (?,?,?)");//sql PreparedStatement
+			ps.setString(1, item.getItemID());//assigning parameters to the statement
 			ps.setString(2, item.getItemName());
 			ps.setInt(3, item.getItemQty());
-			ps.setDate(4, item.getItemExpDate());
-			ps.setDate(5, item.getitemLastRestocked());
+			//ps.setDate(4, item.getItemExpDate());
+			//ps.setDate(5, item.getitemLastRestocked());
 			ps.executeUpdate();
 			System.out.println("Item has been added");
 		}
@@ -195,9 +197,9 @@ public class ItemsDAOImpl implements ItemsDAO {
 		try {
 			DataSource ds = new DataSource();
 			con = ds.createConnection();
-			ps = con.prepareStatement("UPDATE ITEMS_DATA SET Item_Qty = ? WHERE Item_ID = ?");
-			ps.setInt(1, items.getItemQty());
-			ps.setInt(2, items.getItemID());
+			ps = con.prepareStatement("UPDATE ITEMS_DATA SET Item_Quantity = Item_Quantity + 1 WHERE Item_ID = ?");
+			//ps.setInt(1, items.getItemQty());
+			ps.setString(1, items.getItemID());
 			ps.executeUpdate();
 			System.out.println("Updated item number "+items.getItemID());
 		}
