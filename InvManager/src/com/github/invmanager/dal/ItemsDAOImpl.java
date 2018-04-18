@@ -56,31 +56,36 @@ public class ItemsDAOImpl implements ItemsDAO {
 	}
 
 	@Override
-	public List<Items> getItemById(int itemID) {
+	public boolean getItemById(String itemID) throws SQLException {
 		DataSource ds = new DataSource();//create a new instance of the DataSource class
 		Connection con = ds.createConnection();//use the createConnection method defined there to open the connection to the external db
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
-		List<Items> itemList = new ArrayList<Items>();//creates an array to hold the information
+		boolean exist = false;
+		//List<Items> itemList = new ArrayList<Items>();//creates an array to hold the information
 		try {
 			ps = con.prepareStatement("SELECT * FROM ITEMS_DATA WHERE Item_ID = ?");//prepare the sql statement
-			ps.setInt(1, itemID);
-			rs = ps.executeQuery();
+			ps.setString(1, itemID);
+			//rs = ps.executeQuery();
 
-			while(rs.next()) {//loop through the result set and return the results
-				Items items = new Items();
-
-				items.setItemID(rs.getString("Item_ID"));
-				items.setItemName(rs.getString("Item_Name"));
-				items.setItemQty(rs.getInt("Item_Quantity"));
-			//	items.setItemExpDate(rs.getDate("Item_Exp_Date"));
-				//items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
-				
-				itemList.add(items);
-				//return items;
+//			while(rs.next()) {//loop through the result set and return the results
+//				Items items = new Items();
+//
+//				items.setItemID(rs.getString("Item_ID"));
+//				items.setItemName(rs.getString("Item_Name"));
+//				items.setItemQty(rs.getInt("Item_Quantity"));
+//			//	items.setItemExpDate(rs.getDate("Item_Exp_Date"));
+//				//items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
+//				
+//				itemList.add(items);
+//				//return items;
+//			}
+			try(ResultSet result=ps.executeQuery()) {
+				exist = result.next();
 			}
 		}
+		
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -101,7 +106,7 @@ public class ItemsDAOImpl implements ItemsDAO {
 				ex.printStackTrace();
 			}
 		}
-		return itemList;
+		return exist;
 	}
 
 	@Override
@@ -113,8 +118,8 @@ public class ItemsDAOImpl implements ItemsDAO {
 
 		List<Items> itemList = new ArrayList<Items>();//creates an array to hold the information
 		try {
-			ps = con.prepareStatement("SELECT * FROM ITEMS_DATA WHERE Item_Name = ?");//prepare the sql statement
-			ps.setString(1, itemName);
+			ps = con.prepareStatement("SELECT * FROM ITEMS_DATA WHERE Item_Name LIKE ?");//prepare the sql statement
+			ps.setString(1, "%"+itemName+"%");//SQL Wildcard % searches data that matches the keyword
 			rs = ps.executeQuery();
 
 			while(rs.next()) {//loop through the result set and return the results
@@ -165,7 +170,7 @@ public class ItemsDAOImpl implements ItemsDAO {
 					+"VALUES (?,?,?)");//sql PreparedStatement
 			ps.setString(1, item.getItemID());//assigning parameters to the statement
 			ps.setString(2, item.getItemName());
-			ps.setInt(3, item.getItemQty());
+			ps.setInt(3, item.getItemQty()+1);
 			//ps.setDate(4, item.getItemExpDate());
 			//ps.setDate(5, item.getitemLastRestocked());
 			ps.executeUpdate();
@@ -202,6 +207,7 @@ public class ItemsDAOImpl implements ItemsDAO {
 			ps.setString(1, items.getItemID());
 			ps.executeUpdate();
 			System.out.println("Updated item number "+items.getItemID());
+			System.out.println("Updated item name "+items.getItemName());
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
@@ -222,7 +228,7 @@ public class ItemsDAOImpl implements ItemsDAO {
 	}
 
 	@Override
-	public void deleteItems(int itemID) {
+	public void deleteItems(String itemID) {
 		Connection con = null;
 		PreparedStatement ps = null;
 
@@ -230,7 +236,7 @@ public class ItemsDAOImpl implements ItemsDAO {
 			DataSource ds = new DataSource();
 			con = ds.createConnection();
 			ps = con.prepareStatement("DELETE FROM ITEMS_DATA WHERE Item_ID = ?");
-			ps.setInt(1, itemID);//assigning the parameter to the PreparedStatement
+			ps.setString(1, itemID);//assigning the parameter to the PreparedStatement
 			ps.executeUpdate();//modifying existing data is done using executeUpdate() rather than executeQuery()
 			System.out.println("Item removed from database");
 		}
@@ -253,5 +259,6 @@ public class ItemsDAOImpl implements ItemsDAO {
 		}
 
 	}
+
 
 }

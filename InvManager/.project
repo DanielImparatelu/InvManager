@@ -16,6 +16,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>commons-math3-3.6.1.jar</name>
+			<type>1</type>
+			<location>C:/Users/Daniel/Desktop/Uni Year 3/UG Project/InvManager/res/commons-math3-3.6.1.jar</location>
+		</link>
+		<link>
 			<name>res/commons-dbcp2-2.2.0.jar</name>
 			<type>1</type>
 			<location>C:/Users/Daniel/Desktop/Uni Year 3/UG Project/InvManager/res/commons-dbcp2-2.2.0.jar</location>

@@ -14,12 +14,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
@@ -68,9 +69,11 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		}
 
 		else if (e.getSource().equals(showAllItems)) {
+			textArea.setText("");
 			for (Items item : itemsDAO.getAllItems()) {
-				textArea.append("ID = " + item.getItemID() + ", Name = " + item.getItemName() + ", expiry date = "
-						+ item.getItemExpDate() + ", last restocked = " + item.getitemLastRestocked() + "\n\n");
+
+				textArea.append("ITEM: " + "\n" + "ID: " + item.getItemID() + "\n"+
+						"Name: " + item.getItemName() +"\n"+ "Quantity: "+item.getItemQty()+ "\n\n\n");
 			}
 		}
 
@@ -80,16 +83,20 @@ public class InventoryGUI extends JFrame implements ActionListener {
 
 		else if (e.getSource().equals(showAllUsers)) {
 
+			textArea.setText("");
 			for (Users users : usersDAO.getAllUsers()) {
-				System.out.println("User Name = " + users.getName() + ", Password = " + users.getPassword()
+
+				textArea.append("User Name = " + users.getName() + ", Password = " + users.getPassword()
 				+ ", is admin = " + users.getIsAdmin());
 			}
 		}
 
 		else if (e.getSource().equals(getItemByName)) {
+			textArea.setText("");
 			for (Items item : itemsDAO.getItemByName("TEST")) {
-				textArea.append("ID = " + item.getItemID() + ", Name = " + item.getItemName() + ", expiry date = "
-						+ item.getItemExpDate() + ", last restocked = " + item.getitemLastRestocked() + "\n\n");
+
+				textArea.append("ITEM: " + "\n" + "ID: " + item.getItemID() + "\n"+
+						"Name: " + item.getItemName() +"\n"+ "Quantity: "+item.getItemQty()+ "\n\n\n");
 			}
 		}
 
@@ -143,10 +150,12 @@ public class InventoryGUI extends JFrame implements ActionListener {
 
 		else if ((e.getSource().equals(textField)) || (e.getSource().equals(btnSearch))) {
 
+			textArea.setText("");
 			for (Items item : itemsDAO.getItemByName(textField.getText())) {
 
-				textArea.append("ID = " + item.getItemID() + "  Name = " + item.getItemName() + "  Expiry date = "
-						+ item.getItemExpDate() + "  Last restocked = " + item.getitemLastRestocked() + "\n\n");
+
+				textArea.append("ITEM: " + "\n" + "ID: " + item.getItemID() + "\n"+
+						"Name: " + item.getItemName() +"\n"+ "Quantity: "+item.getItemQty()+ "\n\n\n");
 			}
 		}
 
@@ -191,8 +200,8 @@ public class InventoryGUI extends JFrame implements ActionListener {
 	private final JLabel lblLastRestocked = new JLabel("Last restocked");
 	private final static JTextField itemLastRestocked = new JTextField();
 	private final static JPanel receiptWindow = new JPanel();
-	private final JTextArea receiptText = new JTextArea();
-	private final JButton btnReceipt = new JButton("Receipt");
+	private final static JTextArea receiptText = new JTextArea();
+	private final static JButton btnReceipt = new JButton("Receipt");
 	private final JScrollPane receiptScrollPane = new JScrollPane();
 	private final JLabel lblReceiptWindow = new JLabel("Receipt Window");
 
@@ -521,10 +530,10 @@ public class InventoryGUI extends JFrame implements ActionListener {
 
 		getContentPane().add(receiptWindow, "name_75929262704408");
 		GridBagLayout gbl_receiptWindow = new GridBagLayout();
-		gbl_receiptWindow.columnWidths = new int[] { 40, 322, 57, 116, 151, 0 };
-		gbl_receiptWindow.rowHeights = new int[] { 30, 30, 0, 40, 70, 0 };
-		gbl_receiptWindow.columnWeights = new double[] { 0.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
-		gbl_receiptWindow.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_receiptWindow.columnWidths = new int[] { 40, 470, 116, 312, 0 };
+		gbl_receiptWindow.rowHeights = new int[] { 30, 30, 0, 30, 30, 39, 0 };
+		gbl_receiptWindow.columnWeights = new double[] { 0.0, 1.0, 1.0, 0.0, Double.MIN_VALUE };
+		gbl_receiptWindow.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		receiptWindow.setLayout(gbl_receiptWindow);
 
 		GridBagConstraints gbc_lblReceiptWindow = new GridBagConstraints();
@@ -551,6 +560,12 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbc_receiptText.gridx = 1;
 		gbc_receiptText.gridy = 1;
 		receiptText.setEditable(false);
+		lblItemsToSell.setBackground(Color.BLACK);
+		lblItemsToSell.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblItemsToSell.setVerticalAlignment(SwingConstants.TOP);
+		lblItemsToSell.setForeground(Color.RED);
+
+		receiptScrollPane.setColumnHeaderView(lblItemsToSell);
 		// receiptWindow.add(receiptText, gbc_receiptText);
 		// receiptScrollPane).setViewportView(receiptText);
 
@@ -559,9 +574,37 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbc_btnReceipt.insets = new Insets(0, 0, 5, 5);
 		gbc_btnReceipt.gridx = 1;
 		gbc_btnReceipt.gridy = 3;
-
 		btnReceipt.setBackground(new Color(203, 255, 250));
+		btnReceipt.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				receiptText.setText("");
+				JOptionPane.showMessageDialog(null, "Receipt Printed");
+				//itemsDAO.deleteItems(itemID);
+				
+			}
+			
+		});
+		
 		receiptWindow.add(btnReceipt, gbc_btnReceipt);
+
+		GridBagConstraints gbc_btnBack_1 = new GridBagConstraints();
+		btnBack_1.setBackground(new Color(203,255,250));
+		gbc_btnBack_1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnBack_1.insets = new Insets(0, 0, 5, 5);
+		gbc_btnBack_1.gridx = 1;
+		gbc_btnBack_1.gridy = 4;
+		btnBack_1.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				receiptWindow.setVisible(false);
+				mainWindow.setVisible(true);
+			}
+
+		});
+		receiptWindow.add(btnBack_1, gbc_btnBack_1);
 	}
 
 	public static void addItemToDb() throws Exception {
@@ -569,33 +612,45 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		String itemID = idField.getText();
 		String itemName = itemNameField.getText();
 		int itemQty = Integer.valueOf(itemQtyField.getText());
-		String itemExpDateText = itemExpDateField.getText();
-		String itemLastRestockedText = itemLastRestocked.getText();
+//		String itemExpDateText = itemExpDateField.getText();
+//		String itemLastRestockedText = itemLastRestocked.getText();
 
-		java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("d-M-yyyy");
-		java.time.LocalDate expFieldAsDate = java.time.LocalDate.parse(itemExpDateText, formatter);
-		java.time.LocalDate restockedFieldAsDate = java.time.LocalDate.parse(itemLastRestockedText, formatter);
+//		java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("d-M-yyyy");
+//		java.time.LocalDate expFieldAsDate = java.time.LocalDate.parse(itemExpDateText, formatter);
+//		java.time.LocalDate restockedFieldAsDate = java.time.LocalDate.parse(itemLastRestockedText, formatter);
 
-		java.sql.Date expDate = java.sql.Date.valueOf(expFieldAsDate);
-		java.sql.Date restockedDate = java.sql.Date.valueOf(restockedFieldAsDate);
+		//java.sql.Date expDate = java.sql.Date.valueOf(expFieldAsDate);
+		//java.sql.Date restockedDate = java.sql.Date.valueOf(restockedFieldAsDate);
 
 		Items item = new Items();
 		item.setItemID(itemID);
 		item.setItemName(itemName);
-		item.setItemExpDate(expDate);
-		item.setItemLastRestocked(restockedDate);
+		//item.setItemExpDate(expDate);
+		//item.setItemLastRestocked(restockedDate);
 		item.setItemQty(itemQty);
 		itemsDAO.addItem(item);
 		idField.setText("");
 		itemNameField.setText("");
 		itemQtyField.setText("");
-		itemExpDateField.setText("");
-		itemLastRestocked.setText("");
+		//itemExpDateField.setText("");
+		//itemLastRestocked.setText("");
+	}
+
+	private boolean isHoliday() {
+		SimpleDateFormat sdf = new SimpleDateFormat();
+		sdf.setLenient(false);
+		boolean isHoliday = false;
+
+
+
+		return isHoliday;
 	}
 
 	static String scannedItemName;
 	static int scannedItemQty;
 	static String scannedItemID;
+	private final JButton btnBack_1 = new JButton("Back");
+	private final JLabel lblItemsToSell = new JLabel("Items To Sell:");
 	public static void main(String[] args) {
 		InventoryGUI gui = new InventoryGUI();
 		gui.setVisible(true);
@@ -616,72 +671,46 @@ public class InventoryGUI extends JFrame implements ActionListener {
 				isr = new InputStreamReader(socket.getInputStream());// get the value of the scan
 				br = new BufferedReader(isr);// read the input using a Buffered Reader
 				message = br.readLine();// and convert it to a String object
-				
-				System.out.println(message);
-				
-				String id = String.valueOf(scannedItem.getItemID());
-				
-				if(message.matches("[a-zA-Z]+")) {
-					//TODO currently the only scanned input read is the barcode value, and not the name of the item
-					//make it so that the item name is read and sent to the database
-					scannedItemName = message;
-					//scannedItemQty += scannedItemQty;
 
-					//scannedItem.setItemID(message);
-					ItemPrediction pred = new ItemPrediction();
-					pred.execute();
-				}
+				final String tempid = message;//this is the message received from the Android app
 
-				else if (message.matches("[0-9]+")) {// check if the message is a number(barcode) and not any other text
-					mainWindow.setVisible(false);
-					receiptWindow.setVisible(true);
-					scannedItem.setItemID(message);
-					if(id == message) {
-						//scannedItem.setItemQty(scannedItem.getItemQty()+1);
-						//TODO:
-						//Update statement in the DAL to update only the quantity
-						
-						itemsDAO.updateItems(scannedItem);
+				if(receiptWindow.isVisible()==false) {
+
+					//add / update items
+					if (message.matches("[0-9]+")) {// check if the message is a number(barcode) and not any other text
+						scannedItem.setItemID(tempid);//the first message received is the barcode number
 					}
-					else{
-						//terrible code but it works
-						try {
-							if(scannedItem.getItemID().equals(message)) {
-								itemsDAO.updateItems(scannedItem);
-							}
-							else {
-								//scannedItem.setItemID(message);
-								//scannedItem.setItemName(scannedItemName);
-								//scannedItem.setItemQty(scannedItemQty);
-								itemsDAO.addItem(scannedItem);
-							}
-							
-						}
-						catch(Exception e) {
-							e.printStackTrace();
-						}
-						
-						
+					else {
 
+						if (message.equals("password")) {//login statement
+							cardField.setText(message);
+							startWindow.setVisible(false);// hide the login screen
+							mainWindow.setVisible(true);// show the main screen
+						}
+						else {
+							scannedItem.setItemName(tempid);//the second message received is the item name, assuming it was found in the database
+							if(itemsDAO.getItemById(tempid) == false && itemsDAO.getItemByName(tempid)==null) {//if the item does not exist in the local database
+								itemsDAO.addItem(scannedItem);//it gets added to it
+							}
+							else{//if it does exist
+								itemsDAO.updateItems(scannedItem);//the quantity of it gets incremented by 1
+							}
+							ItemPrediction pred = new ItemPrediction();
+							pred.execute();
+						}
 					}
-
 				}
-
-				else if (message.equals("password")) {
-					cardField.setText(message);
-					startWindow.setVisible(false);// hide the login screen
-					mainWindow.setVisible(true);// show the main screen
+				else {
+					//TODO The following code should remove items from the db as long as the receipt window is open
+					System.out.println("window not visible");
+					receiptText.append(tempid+"\n");
+					
 				}
-				
-				
-				
-
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -33,7 +33,7 @@ public class DataSource {
 //		bds.setUsername("sql2216024");
 //		bds.setPassword("dN7%qI2%");
 		bds.setDriverClassName("org.sqlite.JDBC");
-		bds.setUrl("jdbc:sqlite:./../test.db");
+		bds.setUrl("jdbc:sqlite:./test.db");
 
 		//Class.forName("org.sqlite.JDBC");//loads the jdbc driver into the driver manager
 		//con = DriverManager.getConnection("jdbc:sqlite:./../rm1.db");
