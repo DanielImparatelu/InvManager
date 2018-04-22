@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.text.format.Formatter;
 
 import android.view.View;
@@ -48,13 +49,10 @@ public class MainActivity extends Activity {
         return ip;
     }
 
-    public void getJson(View v) throws Exception{
+    public void viewInstructions(View v) throws Exception{
         v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);//fix DeadObjectException bug in android 6
         //from https://stackoverflow.com/questions/33128039/android-6-0-marshmallow-weird-error-with-fragment-animation
-
-        JSONResult3 json = new JSONResult3();
-        json.execute();
-
+        description.setText(R.string.welcome);
     }
 
     public void addItems(View v){

@@ -11,5 +11,7 @@
 	<classpathentry kind="lib" path="res/mysql-connector-java-5.1.45-bin.jar"/>
 	<classpathentry kind="lib" path="res/sqlite-jdbc-3.21.0.jar"/>
 	<classpathentry kind="lib" path="commons-math3-3.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Daniel/Desktop/MultipleRegression.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

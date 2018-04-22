@@ -44,7 +44,9 @@ public class SendTask extends AsyncTask<String, Void, Void> {//asynchronous task
         this.jsonResult3 = jsonResult3;
     }//constructors for the JSON classes, in order to be able to send data directly from there
     public SendTask(JSONResult4 jsonResult4){ this.jsonResult4 = jsonResult4;}
+    public SendTask(){
 
+    }
 
 
     //"192.168.1.8"

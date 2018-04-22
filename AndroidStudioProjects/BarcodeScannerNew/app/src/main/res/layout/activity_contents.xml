@@ -19,15 +19,15 @@
         android:text="Single Scan" />
 
     <Button
-        android:id="@+id/scan_results"
+        android:id="@+id/instructions"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/add_items"
         android:layout_toRightOf="@id/add_items"
-        android:onClick="getJson"
-        android:text="Item Data" />
+        android:onClick="viewInstructions"
+        android:text="Instructions" />
 
     <TextView
         android:id="@+id/barcode_result"
@@ -35,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="32dp"
         android:layout_above="@+id/imageView4"
-        android:layout_alignEnd="@+id/scan_results" />
+        android:layout_alignEnd="@+id/instructions" />
 
     <TextView
         android:id="@+id/description"

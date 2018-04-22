@@ -36,7 +36,7 @@ public class ScanContinuous extends CaptureActivity  {
     CameraSettings settings;
     private String lastText;
     private boolean cameraFlashOn = false;
-    public SendTask sendTask = new SendTask(this);
+
 
     private BarcodeCallback callback = new BarcodeCallback() {
         @Override
@@ -56,9 +56,12 @@ public class ScanContinuous extends CaptureActivity  {
             barcodeScannerView.decodeContinuous(callback);
 
             playSound();
-            //TODO
-            //make it so it sends the continuous scanned data to the socket
-            //sendTask.execute(result.getText());
+    
+
+                SendTask sendTask = new SendTask();
+                sendTask.execute(result.getText());
+
+
         }
 
         @Override

@@ -67,25 +67,11 @@ public class ItemsDAOImpl implements ItemsDAO {
 		try {
 			ps = con.prepareStatement("SELECT * FROM ITEMS_DATA WHERE Item_ID = ?");//prepare the sql statement
 			ps.setString(1, itemID);
-			//rs = ps.executeQuery();
-
-//			while(rs.next()) {//loop through the result set and return the results
-//				Items items = new Items();
-//
-//				items.setItemID(rs.getString("Item_ID"));
-//				items.setItemName(rs.getString("Item_Name"));
-//				items.setItemQty(rs.getInt("Item_Quantity"));
-//			//	items.setItemExpDate(rs.getDate("Item_Exp_Date"));
-//				//items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
-//				
-//				itemList.add(items);
-//				//return items;
-//			}
 			try(ResultSet result=ps.executeQuery()) {
 				exist = result.next();
 			}
 		}
-		
+
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -128,8 +114,6 @@ public class ItemsDAOImpl implements ItemsDAO {
 				items.setItemID(rs.getString("Item_ID"));
 				items.setItemName(rs.getString("Item_Name"));
 				items.setItemQty(rs.getInt("Item_Quantity"));
-				//items.setItemExpDate(rs.getDate("Item_Exp_Date"));
-			//	items.setItemLastRestocked(rs.getDate("Item_Last_Restocked"));
 				itemList.add(items);
 
 			}
@@ -164,15 +148,11 @@ public class ItemsDAOImpl implements ItemsDAO {
 		try {
 			DataSource ds = new DataSource();
 			con = ds.createConnection();
-//			ps = con.prepareStatement("INSERT INTO ITEMS_DATA(Item_ID, Item_Name, Item_Quantity, Item_Exp_Date, Item_Last_Restocked) "
-//					+"VALUES (?,?,?,?,?)");//sql PreparedStatement
 			ps = con.prepareStatement("INSERT INTO ITEMS_DATA(Item_ID, Item_Name, Item_Quantity) "
 					+"VALUES (?,?,?)");//sql PreparedStatement
 			ps.setString(1, item.getItemID());//assigning parameters to the statement
 			ps.setString(2, item.getItemName());
 			ps.setInt(3, item.getItemQty()+1);
-			//ps.setDate(4, item.getItemExpDate());
-			//ps.setDate(5, item.getitemLastRestocked());
 			ps.executeUpdate();
 			System.out.println("Item has been added");
 		}
@@ -206,8 +186,8 @@ public class ItemsDAOImpl implements ItemsDAO {
 			//ps.setInt(1, items.getItemQty());
 			ps.setString(1, items.getItemID());
 			ps.executeUpdate();
-			System.out.println("Updated item number "+items.getItemID());
-			System.out.println("Updated item name "+items.getItemName());
+			System.out.println("Updated item");
+
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
@@ -227,6 +207,36 @@ public class ItemsDAOImpl implements ItemsDAO {
 		}
 	}
 
+	@Override
+	public void updateItemsRemoved(String itemID) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		try {
+			DataSource ds = new DataSource();
+			con = ds.createConnection();
+			ps = con.prepareStatement("UPDATE ITEMS_DATA SET Item_Quantity = Item_Quantity - 1 WHERE Item_ID = ?");
+			//ps.setInt(1, items.getItemQty());
+			ps.setString(1, itemID);
+			ps.executeUpdate();
+			System.out.println("Updated item");
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		finally {//closing connections
+			try {
+				if(ps != null) {
+					ps.close();
+				}
+				if(con != null) {
+					con.close();
+				}
+			}
+			catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
 	@Override
 	public void deleteItems(String itemID) {
 		Connection con = null;
@@ -260,5 +270,39 @@ public class ItemsDAOImpl implements ItemsDAO {
 
 	}
 
+	@Override
+	public int getQtyById(String itemID) {//method used to retrieve the quantity of an item correctly
+		Connection con = null;
+		PreparedStatement ps = null;
 
+		int qty = 0;
+		try {
+			DataSource ds = new DataSource();
+			con = ds.createConnection();
+			ps = con.prepareStatement("SELECT Item_Quantity FROM ITEMS_DATA WHERE Item_ID = ?");
+			ps.setString(1, itemID);//assigning the parameter to the PreparedStatement
+			//ps.executeUpdate();
+			try(ResultSet result=ps.executeQuery()) {//try with resources
+				qty = result.getInt(1);//set the returned value
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+
+		finally {//closing connections
+			try {
+				if(ps != null) {
+					ps.close();
+				}
+				if(con != null) {
+					con.close();
+				}
+			}
+			catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		return qty;
+	}
 }

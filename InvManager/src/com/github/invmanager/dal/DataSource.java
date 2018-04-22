@@ -1,10 +1,8 @@
 package com.github.invmanager.dal;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.commons.dbcp2.datasources.*;
 /*
  * This class manages the connection to the external data source using the Apache DBCP Library
  * This connection pooling method is used in order to avoid acquiring physical connections each time data is requested,

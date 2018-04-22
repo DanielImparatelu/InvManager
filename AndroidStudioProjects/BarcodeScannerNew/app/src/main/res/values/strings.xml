@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">BarcodeScanner</string>
-    <string name="welcome">\n\t\t\tWelcome to the mobile barcode scanner. Click Single Scan to scan the login barcode, or get info about a single item.\n\t\t\tSelect Multi Scan to scan items in bulk and add them to the database.\n\t\t\tThe app connects to two UPC (Universal Product Code) databases, and looks for information on the scanned product.\n\t\t\tThere may be situations where neither of them have information on that product."</string>
+    <string name="welcome">\n\t\t\tWelcome to the mobile barcode scanner. Click Single Scan to scan the login barcode, or get info about a single item.\n\t\t\tSelect Multi Scan to scan items in bulk and add them to the database.\n\t\t\tThe app connects to two UPC (Universal Product Code) databases, and looks for information on the scanned product.\n\t\t\tThere may be situations where neither database has information on that product."</string>
     <string name="credit">Daniel Imparatelu @University of Bedfordshire</string>
 </resources>

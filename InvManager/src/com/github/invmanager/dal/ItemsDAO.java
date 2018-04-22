@@ -13,4 +13,6 @@ public interface ItemsDAO {
 	public void addItem(Items item);
 	public void updateItems(Items items);
 	public void deleteItems (String itemID);
+	public void updateItemsRemoved(String itemID);
+	public int getQtyById(String itemID);
 }
