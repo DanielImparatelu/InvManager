@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -32,7 +34,9 @@ import com.github.invmanager.dal.Items;
 import com.github.invmanager.dal.ItemsDAOImpl;
 import com.github.invmanager.dal.Users;
 import com.github.invmanager.dal.UsersDAOImpl;
-import com.github.invmanager.util.ItemPrediction;
+//import com.github.invmanager.util.ItemPrediction;
+import com.github.invmanager.util.LinearRegression;
+
 
 /*
  * @author Daniel Imparatelu
@@ -50,7 +54,10 @@ public class InventoryGUI extends JFrame implements ActionListener {
 	private static BufferedReader br;
 	public static String message;
 
+	public static int monthToPredict;
 	private static final long serialVersionUID = 1L;
+	
+	NumberFormat df = new DecimalFormat("#.00");//decimal format for prediction results
 
 	Items items = new Items();
 	static ItemsDAOImpl itemsDAO = new ItemsDAOImpl();
@@ -77,9 +84,8 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		}
 
 		else if (e.getSource().equals(placeOrder)) {
-
+			//nothing here yet
 		}
-
 		else if (e.getSource().equals(showAllUsers)) {
 
 			textArea.setText("");
@@ -94,7 +100,6 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		else if (e.getSource().equals(btnLogin) || e.getSource().equals(passwordField)
 				|| e.getSource().equals(cardField)) {// login methods
 			// overly complicated login method
-
 			String inputUName = userNameField.getText();
 			char[] inputCharField = passwordField.getPassword();// get text as a character array
 			String inputPassField = new String(inputCharField);// converting the char input from the password field into
@@ -110,7 +115,6 @@ public class InventoryGUI extends JFrame implements ActionListener {
 				// userNameField.setText("");
 				// passwordField.setText("");
 			}
-
 			// Username and password login statement
 			else {
 				for (Users user : usersDAO.retrieveUser(inputUName, inputPassField)) {// for each loop to retrieve
@@ -145,11 +149,9 @@ public class InventoryGUI extends JFrame implements ActionListener {
 						"Name: " + item.getItemName() +"\n"+ "Quantity: "+item.getItemQty()+ "\n\n\n");
 			}
 		}
-
 		else if (e.getSource().equals(btnExit)) {
 			System.exit(0);
 		}
-
 	}
 
 	private JButton placeOrder = new JButton("Place Order");
@@ -193,17 +195,25 @@ public class InventoryGUI extends JFrame implements ActionListener {
 	static String scannedItemName;
 	static int scannedItemQty;
 	static String scannedItemID;
-	private final JLabel lblWelcome = new JLabel("    Inventory Manager");
-	private final JLabel lblAddItems = new JLabel("        Add Items");
+	private final JLabel lblWelcome = new JLabel("   Inventory Manager");
+	private final JLabel lblAddItems = new JLabel("       Add Items");
 	private final static JLabel lblInfo = new JLabel("");
 	private final JLabel lblInfo2 = new JLabel("");
+	private static JPanel predictWindow = new JPanel();
+	private final JLabel lblPredictWindowTitle = new JLabel("                                        Sale Prediction");
+	public static JTextField textEnterMonth = new JTextField();
+	private final static JLabel lblPredictItemName = new JLabel("");
+	private final JLabel lblEnterMonth = new JLabel("Month for which you want to predict sales(number):");
+	private final JLabel lblSalesProjection = new JLabel("Sales Projection:");
+	public static JLabel lblSaleProjection = new JLabel("");
+	private final JButton btnPredict = new JButton("Predict");
+	private final JButton btnBack2 = new JButton("Back");
+	private final JButton btnPredictWindow = new JButton("Predict Window");
 
 	public InventoryGUI() {
 		// auto-generated constructor
 		// a lot of code because of GridBagLayout
-
 		super();
-		
 		itemLastRestocked.setColumns(10);
 		itemExpDateField.setColumns(10);
 		userNameField.setColumns(10);
@@ -222,10 +232,10 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbl_startWindow.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 		gbl_startWindow.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		startWindow.setLayout(gbl_startWindow);
-		
+
 		GridBagConstraints gbc_lblWelcome = new GridBagConstraints();
 		gbc_lblWelcome.fill = GridBagConstraints.BOTH;
-		lblWelcome.setFont(new Font("Times New Roman", Font.PLAIN, 31));
+		lblWelcome.setFont(new Font("Arial", Font.PLAIN, 31));
 		lblWelcome.setOpaque(true);
 		lblWelcome.setBackground(new Color(63,81,181));
 		lblWelcome.setForeground(Color.WHITE);
@@ -382,13 +392,30 @@ public class InventoryGUI extends JFrame implements ActionListener {
 				receiptWindow.setVisible(true);
 			}
 		});
+
+		GridBagConstraints gbc_btnPredictWindow = new GridBagConstraints();
+		gbc_btnPredictWindow.insets = new Insets(0, 0, 5, 5);
+		gbc_btnPredictWindow.gridx = 5;
+		gbc_btnPredictWindow.gridy = 5;
+		btnPredictWindow.setForeground(Color.WHITE);
+		btnPredictWindow.setBackground(new Color(63,81,181));
+		mainWindow.add(btnPredictWindow, gbc_btnPredictWindow);
 		receiptWindowBtn.setBackground(new Color(63,81,181));
 		GridBagConstraints gbc_receiptWindowBtn = new GridBagConstraints();
 		gbc_receiptWindowBtn.fill = GridBagConstraints.HORIZONTAL;
 		gbc_receiptWindowBtn.anchor = GridBagConstraints.NORTH;
 		gbc_receiptWindowBtn.insets = new Insets(0, 0, 5, 5);
 		gbc_receiptWindowBtn.gridx = 5;
-		gbc_receiptWindowBtn.gridy = 5;
+		gbc_receiptWindowBtn.gridy = 6;
+		btnPredictWindow.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				mainWindow.setVisible(false);
+				predictWindow.setVisible(true);
+			}
+
+		});
 		mainWindow.add(receiptWindowBtn, gbc_receiptWindowBtn);
 
 		textField = new JTextField();
@@ -412,7 +439,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		btnSearch.setBackground(new Color(63,81,181));
 
 		mainWindow.add(btnSearch, gbc_btnSearch);
-		
+
 		GridBagConstraints gbc_lblInfo = new GridBagConstraints();
 		gbc_lblInfo.gridwidth = 3;
 		gbc_lblInfo.insets = new Insets(0, 0, 0, 5);
@@ -429,7 +456,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbl_addItemWindow.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 				Double.MIN_VALUE };
 		addItemWindow.setLayout(gbl_addItemWindow);
-		
+
 		GridBagConstraints gbc_lblAddItems = new GridBagConstraints();
 		lblAddItems.setBackground(new Color(63,81,181));
 		gbc_lblAddItems.fill = GridBagConstraints.BOTH;
@@ -438,7 +465,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbc_lblAddItems.gridx = 3;
 		gbc_lblAddItems.gridy = 1;
 		lblAddItems.setForeground(Color.WHITE);
-		lblAddItems.setFont(new Font("Times New Roman", Font.PLAIN, 31));
+		lblAddItems.setFont(new Font("Arial", Font.PLAIN, 31));
 		lblAddItems.setOpaque(true);
 		addItemWindow.add(lblAddItems, gbc_lblAddItems);
 
@@ -456,7 +483,6 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbc_idField.gridx = 3;
 		gbc_idField.gridy = 3;
 		addItemWindow.add(idField, gbc_idField);
-
 
 		GridBagConstraints gbc_lblItemName = new GridBagConstraints();
 		gbc_lblItemName.insets = new Insets(0, 0, 5, 5);
@@ -487,53 +513,53 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		gbc_itemQtyField.gridx = 3;
 		gbc_itemQtyField.gridy = 5;
 		addItemWindow.add(itemQtyField, gbc_itemQtyField);
-		
-				GridBagConstraints gbc_btnAdd = new GridBagConstraints();
-				gbc_btnAdd.fill = GridBagConstraints.HORIZONTAL;
-				gbc_btnAdd.insets = new Insets(0, 0, 5, 5);
-				gbc_btnAdd.gridx = 3;
-				gbc_btnAdd.gridy = 6;
-				btnAdd.setForeground(Color.WHITE);
-				btnAdd.setBackground(new Color(63,81,181));
-				btnAdd.addActionListener(new ActionListener() {
 
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						try {
-							addItemToDb();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
+		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
+		gbc_btnAdd.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnAdd.insets = new Insets(0, 0, 5, 5);
+		gbc_btnAdd.gridx = 3;
+		gbc_btnAdd.gridy = 6;
+		btnAdd.setForeground(Color.WHITE);
+		btnAdd.setBackground(new Color(63,81,181));
+		btnAdd.addActionListener(new ActionListener() {
 
-				});
-				addItemWindow.add(btnAdd, gbc_btnAdd);
-		
-				GridBagConstraints gbc_btnBack = new GridBagConstraints();
-				gbc_btnBack.fill = GridBagConstraints.HORIZONTAL;
-				gbc_btnBack.insets = new Insets(0, 0, 5, 5);
-				gbc_btnBack.gridx = 4;
-				gbc_btnBack.gridy = 6;
-				btnBack.setForeground(Color.WHITE);
-				btnBack.setBackground(new Color(63,81,181));
-				btnBack.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					addItemToDb();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						addItemWindow.setVisible(false);
-						mainWindow.setVisible(true);
-					}
+		});
+		addItemWindow.add(btnAdd, gbc_btnAdd);
 
-				});
-				addItemWindow.add(btnBack, gbc_btnBack);
-				
-				GridBagConstraints gbc_lblInfo2 = new GridBagConstraints();
-				gbc_lblInfo2.gridwidth = 2;
-				gbc_lblInfo2.insets = new Insets(0, 0, 5, 5);
-				gbc_lblInfo2.gridx = 3;
-				gbc_lblInfo2.gridy = 7;
-				addItemWindow.add(lblInfo2, gbc_lblInfo2);
+		GridBagConstraints gbc_btnBack = new GridBagConstraints();
+		gbc_btnBack.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnBack.insets = new Insets(0, 0, 5, 5);
+		gbc_btnBack.gridx = 4;
+		gbc_btnBack.gridy = 6;
+		btnBack.setForeground(Color.WHITE);
+		btnBack.setBackground(new Color(63,81,181));
+		btnBack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				addItemWindow.setVisible(false);
+				mainWindow.setVisible(true);
+			}
+
+		});
+		addItemWindow.add(btnBack, gbc_btnBack);
+
+		GridBagConstraints gbc_lblInfo2 = new GridBagConstraints();
+		gbc_lblInfo2.gridwidth = 2;
+		gbc_lblInfo2.insets = new Insets(0, 0, 5, 5);
+		gbc_lblInfo2.gridx = 3;
+		gbc_lblInfo2.gridy = 7;
+		addItemWindow.add(lblInfo2, gbc_lblInfo2);
 		receiptWindow.setBackground(new Color(16,174,238));
 
 		getContentPane().add(receiptWindow, "name_75929262704408");
@@ -592,9 +618,6 @@ public class InventoryGUI extends JFrame implements ActionListener {
 			}
 
 		});
-
-
-
 		GridBagConstraints gbc_table = new GridBagConstraints();
 		gbc_table.insets = new Insets(0, 0, 5, 5);
 		gbc_table.fill = GridBagConstraints.BOTH;
@@ -621,6 +644,99 @@ public class InventoryGUI extends JFrame implements ActionListener {
 
 		});
 		receiptWindow.add(btnBack_1, gbc_btnBack_1);
+
+		getContentPane().add(predictWindow, "name_108845531714936");
+		predictWindow.setBackground(new Color(16, 174, 238));
+		GridBagLayout gbl_predictWindow = new GridBagLayout();
+		gbl_predictWindow.columnWidths = new int[] {90, 90, 220, 103, 90, 90, 0};
+		gbl_predictWindow.rowHeights = new int[]{0, 30, 30, 30, 30, 30, 30, 0, 30, 30, 30, 30, 0};
+		gbl_predictWindow.columnWeights = new double[]{0.0, 0.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_predictWindow.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		predictWindow.setLayout(gbl_predictWindow);
+
+		GridBagConstraints gbc_lblPredictWindowTitle = new GridBagConstraints();
+		lblPredictWindowTitle.setForeground(Color.WHITE);
+		lblPredictWindowTitle.setFont(new Font("Arial", Font.PLAIN, 15));
+		lblPredictWindowTitle.setHorizontalTextPosition(SwingConstants.CENTER);
+		lblPredictWindowTitle.setOpaque(true);
+		lblPredictWindowTitle.setBackground(new Color(63,81,181));
+		gbc_lblPredictWindowTitle.gridwidth = 2;
+		gbc_lblPredictWindowTitle.fill = GridBagConstraints.BOTH;
+		gbc_lblPredictWindowTitle.insets = new Insets(0, 0, 5, 5);
+		gbc_lblPredictWindowTitle.gridx = 2;
+		gbc_lblPredictWindowTitle.gridy = 2;
+		predictWindow.add(lblPredictWindowTitle, gbc_lblPredictWindowTitle);
+
+		GridBagConstraints gbc_lblPredictItemName = new GridBagConstraints();
+		gbc_lblPredictItemName.gridwidth = 2;
+		gbc_lblPredictItemName.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblPredictItemName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblPredictItemName.gridx = 2;
+		gbc_lblPredictItemName.gridy = 4;
+		predictWindow.add(lblPredictItemName, gbc_lblPredictItemName);
+
+		GridBagConstraints gbc_lblEnterMonth = new GridBagConstraints();
+		gbc_lblEnterMonth.insets = new Insets(0, 0, 5, 5);
+		gbc_lblEnterMonth.anchor = GridBagConstraints.WEST;
+		gbc_lblEnterMonth.gridx = 2;
+		gbc_lblEnterMonth.gridy = 6;
+		predictWindow.add(lblEnterMonth, gbc_lblEnterMonth);
+		textEnterMonth.setColumns(10);
+
+		GridBagConstraints gbc_textEnterMonth = new GridBagConstraints();
+		gbc_textEnterMonth.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textEnterMonth.insets = new Insets(0, 0, 5, 5);
+		gbc_textEnterMonth.gridx = 3;
+		gbc_textEnterMonth.gridy = 6;
+		predictWindow.add(textEnterMonth, gbc_textEnterMonth);
+
+		GridBagConstraints gbc_lblSalesProjection = new GridBagConstraints();
+		gbc_lblSalesProjection.anchor = GridBagConstraints.WEST;
+		gbc_lblSalesProjection.insets = new Insets(0, 0, 5, 5);
+		gbc_lblSalesProjection.gridx = 2;
+		gbc_lblSalesProjection.gridy = 8;
+		predictWindow.add(lblSalesProjection, gbc_lblSalesProjection);
+
+		GridBagConstraints gbc_lblSaleProjection = new GridBagConstraints();
+		gbc_lblSaleProjection.insets = new Insets(0, 0, 5, 5);
+		gbc_lblSaleProjection.gridx = 3;
+		gbc_lblSaleProjection.gridy = 8;
+		predictWindow.add(lblSaleProjection, gbc_lblSaleProjection);
+
+		GridBagConstraints gbc_btnPredict = new GridBagConstraints();
+		btnPredict.setForeground(Color.WHITE);
+		btnPredict.setBackground(new Color(63, 81, 181));
+		gbc_btnPredict.gridwidth = 2;
+		gbc_btnPredict.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnPredict.insets = new Insets(0, 0, 5, 5);
+		gbc_btnPredict.gridx = 2;
+		gbc_btnPredict.gridy = 10;
+		btnPredict.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LinearRegression.getPrediction();
+			}
+		});
+		predictWindow.add(btnPredict, gbc_btnPredict);
+
+		GridBagConstraints gbc_btnBack2 = new GridBagConstraints();
+		btnBack2.setForeground(Color.WHITE);
+		btnBack2.setBackground(new Color(63, 81, 181));
+		gbc_btnBack2.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnBack2.gridwidth = 2;
+		gbc_btnBack2.insets = new Insets(0, 0, 0, 5);
+		gbc_btnBack2.gridx = 2;
+		gbc_btnBack2.gridy = 11;
+		btnBack2.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				predictWindow.setVisible(false);
+				mainWindow.setVisible(true);
+			}
+		});
+		predictWindow.add(btnBack2, gbc_btnBack2);
 	}
 
 	public void addItemToDb() throws Exception {//manually add items to database
@@ -639,12 +755,12 @@ public class InventoryGUI extends JFrame implements ActionListener {
 		itemQtyField.setText("");
 		lblInfo2.setText("Item added");
 	}
-
+	static Items scannedItem = new Items();
 	public static void main(String[] args) {
 		InventoryGUI gui = new InventoryGUI();
 
 		gui.setVisible(true);
-		Items scannedItem = new Items();
+		
 
 		try// open the server so the Android app can connect
 		{
@@ -663,22 +779,21 @@ public class InventoryGUI extends JFrame implements ActionListener {
 				message = br.readLine();// and convert it to a String object
 
 				final String tempid = message;//this is the message received from the Android app
+				
+
 
 				//add / update items
 				if (message.matches("[0-9]+")) {// check if the message is a number(barcode) and not any other text
 					scannedItem.setItemID(tempid);//the first message received is the barcode number
 				}
 				else {
-
 					if (message.equals("password")) {//login statement
 						cardField.setText(message);
 						startWindow.setVisible(false);// hide the login screen
 						mainWindow.setVisible(true);// show the main screen
 					}
 					else {
-						ItemPrediction p = new ItemPrediction();
-						//p.execute();
-						//maybe make a button which shows the prediction of the last item scanned
+						lblPredictItemName.setText(tempid);
 						scannedItem.setItemName(tempid);//the second message received is the item name, assuming it was found in the database
 						if(itemsDAO.getItemById(tempid) == false && itemsDAO.getItemByName(tempid).isEmpty()) {//if the item does not exist in the local database
 							itemsDAO.addItem(scannedItem);//it gets added to it
@@ -687,7 +802,6 @@ public class InventoryGUI extends JFrame implements ActionListener {
 						else{//if it does exist
 							itemsDAO.updateItems(scannedItem);//the quantity of it gets incremented by 1
 							lblInfo.setText("Item has been updated");
-							
 						}
 					}
 				}
@@ -707,9 +821,7 @@ public class InventoryGUI extends JFrame implements ActionListener {
 						System.out.println("err");
 					}
 				}
-				else if(mainWindow.isVisible()) {
-					
-				}
+
 			}
 
 		} catch (IOException e) {

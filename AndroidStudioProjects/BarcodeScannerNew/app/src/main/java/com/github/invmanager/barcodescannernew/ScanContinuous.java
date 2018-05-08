@@ -56,7 +56,7 @@ public class ScanContinuous extends CaptureActivity  {
             barcodeScannerView.decodeContinuous(callback);
 
             playSound();
-    
+
 
                 SendTask sendTask = new SendTask();
                 sendTask.execute(result.getText());

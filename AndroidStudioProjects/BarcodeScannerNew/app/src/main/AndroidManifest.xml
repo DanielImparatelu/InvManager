@@ -23,9 +23,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="BarcodeScanner"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/ic_mobile"
+        android:label="BarcodeScannerWF"
+        android:roundIcon="@mipmap/ic_mobile"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -41,7 +41,7 @@
         />
 
         <activity android:name=".MainActivity"
-            android:label="Barcode Scanner">
+            android:label="Barcode Scanner MD">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

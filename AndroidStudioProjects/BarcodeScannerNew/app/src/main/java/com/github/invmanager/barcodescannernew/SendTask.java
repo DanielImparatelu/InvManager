@@ -60,7 +60,7 @@ public class SendTask extends AsyncTask<String, Void, Void> {//asynchronous task
                 try{
                     String ip = MainActivity.ip;
                    // InetAddress address = InetAddress.getByName(getLocalIpAddress());
-                    s = new Socket(/*ip.toString()*/"192.168.1.8",7800);//initialises the socket with the IP and port
+                    s = new Socket(/*ip.toString()*/"192.168.1.8"/*"192.168.43.186"*/,7800);//initialises the socket with the IP and port
                     pw = new PrintWriter(s.getOutputStream());//creates a PrintWriter object to store the data sent
                     pw.write(message);//gets the message
                     pw.flush();//and sends it to the stream

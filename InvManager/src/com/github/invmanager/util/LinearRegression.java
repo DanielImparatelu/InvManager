@@ -1,108 +1,113 @@
 package com.github.invmanager.util;
 
-
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
-import org.junit.jupiter.api.Test;
+import com.github.invmanager.gui.InventoryGUI;
 
 public class LinearRegression {
-	static double pred = 0;
+	public static double pred = 0;
 	static double pred2 = 0;
-	@Test
-	public void testRegression() {
-		System.out.println("TESTING REGRESSION");
-		OLSMultipleLinearRegression reg = new OLSMultipleLinearRegression();
+	static int month;
+	static boolean isHoliday = false;
+	/*
+	 * TODO
+	 * adjust the x values to closely match the y values
+	 * make dropdown list with month name
+	 * in code correspond each month to an x value
+	 */
+	private static boolean setIsHoliday() {
+		
+		month = Integer.valueOf(InventoryGUI.textEnterMonth.getText());
 
-		double[][] X = {{1,1},{2,0},{3,0},{4,1},{5,0},{6,0},{7,0},{8,0},{9,1},{10,1},{11,0},{12,1}};
-
-		double[] Y = {190,60,50,100,70,50,50,45,100,120,80,200};
-		reg.setNoIntercept(false);
-		reg.newSampleData(Y, X);
-		double[] beta = reg.estimateRegressionParameters();
-		double residualsqsum = reg.calculateResidualSumOfSquares();
-		double totalsqsum = reg.calculateTotalSumOfSquares();
-		double adjrsq = reg.calculateAdjustedRSquared();
-		double regstderr = reg.estimateRegressionStandardError();
-		double regandvar = reg.estimateRegressandVariance();
-		double[] regparam = reg.estimateRegressionParameters();
-		RealMatrix fsd = reg.calculateHat();
-		for (double d : beta) {
-			System.out.println("D: " + d);
+		if ((month == 1)||(month == 4)||(month == 9)||(month == 10)||(month == 12)) {
+			isHoliday = true;
 		}
-		System.out.println("residual sq sum " + residualsqsum);
-		System.out.println("total sq sum " + totalsqsum);
-		System.out.println("adjusted r squared " + adjrsq);
-		System.out.println("reg std error " + regstderr);
-		System.out.println("regress and variance " + regandvar);
-		System.out.println(fsd.getData());
-
-		for (double d : regparam) {
-			System.out.println("regparam " + d);
+		else {
+			isHoliday = false;
 		}
-		for (double d : beta) {
-			System.out.println("beta " + d);
-		}
-
+		return isHoliday;
 	}
 
 	public static double getPrediction() {
 		SimpleRegression simplereg = new SimpleRegression(true);
+		month = Integer.valueOf(InventoryGUI.textEnterMonth.getText());
+		setIsHoliday();
 
 		// passing data to the model
 		// model will be fitted automatically by the class 
+
 		simplereg.addData(new double[][] {
-			{1, 190},
-			{0, 60},
-			{0, 50},
-			{1, 100},
-			{0, 70},
-			{1, 100},
-			{1, 120},
-			{0, 80},
-			{1, 100},
-			{1, 120},
-			{0, 80},
-			{1, 200}
-		});
-
-		// querying for model parameters
-		System.out.println("slope = " + simplereg.getSlope());
-		System.out.println("intercept = " + simplereg.getIntercept());
-
-		// trying to run model for unknown data
-		System.out.println("prediction for 1 based on holiday = " + simplereg.predict(1));
-		pred = simplereg.predict(1);
-		return pred;
-	}
-
-	public static double getPrediction2() {
-		SimpleRegression simplereg = new SimpleRegression(true);
-
-		// passing data to the model
-		// model will be fitted automatically by the class 
-		simplereg.addData(new double[][] {
-			{1, 190},
-			{2, 60},
-			{3, 50},
-			{4, 100},
-			{5, 70},
-			{6, 100},
-			{7, 120},
-			{8, 80},
-			{9, 100},
-			{10, 120},
+			{18, 190},
+			{4, 60},
+			{2, 50},
+			{12, 100},
+			{10, 70},
+			{6, 50},
+			{8, 50},
+			{3, 45},
+			{14, 100},
+			{16, 120},
 			{11, 80},
-			{12, 200}
+			{20, 200}
 		});
-		System.out.println("slope2 = " + simplereg.getSlope());
-		System.out.println("intercept2 = " + simplereg.getIntercept());
+		simplereg.addData(new double[][] {
+			{18, 180},
+			{4, 70},
+			{2, 55},
+			{12, 125},
+			{10, 78},
+			{6, 70},
+			{8, 65},
+			{3, 55},
+			{14, 120},
+			{16, 150},
+			{11, 90},
+			{20, 220}
+		});
+		simplereg.addData(new double[][] {
+			{18, 160},
+			{4, 85},
+			{2, 70},
+			{12, 145},
+			{10, 85},
+			{6, 90},
+			{8, 88},
+			{3, 85},
+			{14, 130},
+			{16, 160},
+			{11, 100},
+			{20, 230}
+		});
+//		simplereg.addData(new double[][] {
+//			{1.1,190},
+//			{1.2,180},
+//			{1.3,160},
+//			{1.4,150},
+//			{1.5,200},
+//			{1.6,202},
+//		});
 
-		// trying to run model for unknown data
-		System.out.println("prediction for 1 based on month = " + simplereg.predict(1));
-		pred2 = simplereg.predict(1);
-		return pred2;
+		System.out.println("prediction for month "+month+" based on holiday = " + simplereg.predict(month));
+		pred = simplereg.predict(month);
+		//InventoryGUI.lblSaleProjection.setText(String.valueOf(pred));
+		if(isHoliday == true) {
+			System.out.println("holiday");
+			double salePredictionHoliday = pred +(0.1 *pred);
+			pred = pred *(0.1 *pred);
+			InventoryGUI.lblSaleProjection.setText(String.valueOf(salePredictionHoliday));
+			System.out.println("sph "+salePredictionHoliday);
+			return salePredictionHoliday;
+		}
+		else if(isHoliday == false) {
+			System.out.println("not holiday");
+			InventoryGUI.lblSaleProjection.setText(String.valueOf(pred));
+			System.out.println("pred "+pred);
+			return pred;
+		}
+		else {
+			return 0;
+		}
+
+
 	}
-
 
 }
